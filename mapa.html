@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081713">
+  <meta name="description" content="Explore o mapa colaborativo da URBS em Montes Claros.">
+  <title>Mapa — URBS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="assets/js/map.js"></script>
+</head>
+<body class="app-page">
+  <header class="app-header"><a class="wordmark" href="index.html">urbs<span>.</span></a><nav><a href="index.html">Início</a><a class="active" href="mapa.html">Mapa</a><a href="registro.html">Registrar</a></nav><a class="header-action" href="registro.html">Nova ocorrência <span>＋</span></a></header>
+  <main class="map-layout">
+    <aside class="map-sidebar">
+      <p class="section-kicker"><span>URBS / 01</span> / TERRITÓRIO</p>
+      <h1>O mapa da<br><em>cidade.</em></h1>
+      <p class="map-intro">Uma visão geográfica das observações compartilhadas sobre a infraestrutura urbana.</p>
+      <div class="map-status"><span class="status-dot"></span><span>AMBIENTE DE DEMONSTRAÇÃO</span></div>
+      <div class="map-count"><strong id="report-count">0</strong><span>REGISTROS NESTE NAVEGADOR</span></div>
+      <label class="filter-label" for="category-filter">FILTRAR POR CATEGORIA</label>
+      <select id="category-filter"><option value="all">Todas as categorias</option><option value="Iluminação pública">Iluminação pública</option><option value="Pavimentação">Pavimentação</option><option value="Acessibilidade">Acessibilidade</option><option value="Drenagem">Drenagem</option><option value="Sinalização">Sinalização</option><option value="Outro">Outro</option></select>
+      <div class="map-legend"><span><i class="legend-dot dot-light"></i> Iluminação</span><span><i class="legend-dot dot-road"></i> Pavimentação</span><span><i class="legend-dot dot-access"></i> Acessibilidade</span><span><i class="legend-dot dot-other"></i> Outras</span></div>
+      <div class="empty-state" id="empty-state"><span class="empty-symbol">＋</span><h2>O mapa começa com uma observação.</h2><p>Ainda não há registros salvos neste navegador. Você pode adicionar o primeiro para visualizar como a experiência funciona.</p><a class="light-button" href="registro.html">Registrar ocorrência <span>↗</span></a></div>
+      <p class="local-notice">Os registros deste protótipo ficam armazenados apenas neste navegador. Eles não são enviados a um servidor e não ficam visíveis para outros usuários.</p>
+    </aside>
+    <section class="map-stage" aria-label="Mapa interativo de Montes Claros">
+      <div id="map" role="application" aria-label="Mapa interativo com marcadores de ocorrências"></div>
+      <div class="map-top-label"><span>MG / BRASIL</span><b>MONTES CLAROS</b></div>
+      <a class="map-home-link" href="index.html">← Voltar à página inicial</a>
+    </section>
+  </main>
+</body>
+</html>
