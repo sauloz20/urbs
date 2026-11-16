@@ -1,10 +1,11 @@
-﻿.DS_Store
+# Local configs and secrets
+.env
+.env.*
+!.env.example
+node_modules/
+vendor/
+*.log
+.DS_Store
 Thumbs.db
 .vscode/
 .idea/
-*.log
-*.tmp
-.env
-.env.*
-vendor/
-node_modules/

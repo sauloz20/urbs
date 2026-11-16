@@ -1,0 +1,7 @@
+{
+  "routes": [
+    { "path": "/", "title": "URBS — Início" },
+    { "path": "/mapa.html", "title": "URBS — Mapa" },
+    { "path": "/registro.html", "title": "URBS — Registrar ocorrência" }
+  ]
+}

@@ -1,56 +1,41 @@
-# URBS — experiência web
+# URBS — plataforma colaborativa urbana
 
-Frontend responsivo da plataforma acadêmica URBS, com homepage editorial/cinematográfica, mapa interativo e fluxo demonstrativo de registro.
+Versão web acadêmica para registrar, localizar, visualizar e acompanhar demonstrações de problemas de infraestrutura urbana em Montes Claros — MG.
 
-## Executar
+## Executar localmente
 
-1. Extraia a pasta `urbs-site` para `C:\xampp\htdocs\`.
-2. Inicie o Apache no XAMPP.
-3. Acesse `http://localhost/urbs-site/`.
+Na raiz do projeto, inicie um servidor estático para servir a pasta `public`:
 
-Também pode abrir `index.html` diretamente no navegador, mas o uso por servidor local é recomendado para evitar restrições de alguns navegadores.
-
-## O que está implementado
-
-- Homepage responsiva com vídeo de fundo, fotografias e seções editoriais.
-- Animações com GSAP e ScrollTrigger; rolagem suave com Lenis.
-- Menu responsivo e barra de progresso de leitura.
-- Mapa Leaflet com base OpenStreetMap, centralizado em Montes Claros.
-- Formulário de registro com seleção de coordenadas no mapa.
-- Registros demonstrativos salvos no `localStorage` do navegador e exibidos no mapa.
-- Filtro por categoria e popups dos marcadores.
-- Avisos explícitos de que os registros não são enviados a um servidor.
-
-## Limitação importante: backend
-
-Este pacote é um frontend funcional para demonstração. Ainda não está conectado à API PHP nem ao banco MySQL do projeto. Os registros ficam somente no navegador em que foram criados, não são compartilhados com outros usuários e podem ser apagados ao limpar os dados do site. Não use dados pessoais ou sensíveis.
-
-Para integrar ao backend, substitua as operações de `localStorage` em `assets/js/registro.js` e `assets/js/map.js` por requisições à API, mantendo validação no servidor e consultas parametrizadas.
-
-## Bibliotecas e serviços externos
-
-- GSAP 3 + ScrollTrigger
-- Lenis
-- Leaflet 1.9.4
-- OpenStreetMap
-- Google Fonts
-
-As bibliotecas, fontes, tiles do mapa, vídeo e fotografias são carregados de serviços externos; é necessária conexão com a internet.
-
-As imagens e o vídeo são ilustrativos, de bancos fotográficos, e não representam ocorrências reais de Montes Claros. Antes de publicar, baixe e hospede localmente os arquivos de mídia e confira os termos de uso/licença e créditos.
-
-## Estrutura
-
-```text
-urbs-site/
-├── index.html
-├── mapa.html
-├── registro.html
-├── README.md
-└── assets/
-    ├── css/style.css
-    └── js/
-        ├── main.js
-        ├── map.js
-        └── registro.js
+```bash
+python3 -m http.server 8000 --bind 127.0.0.1 --directory public
 ```
+
+Acesse `http://127.0.0.1:8000/`. O serviço de mapas e as fontes precisam de conexão com a internet.
+
+## Telas
+
+- `public/index.html`: apresenta a iniciativa, categorias, área piloto e fluxo de participação.
+- `public/mapa.html`: explora categorias, estados e referências de localização; exibe detalhes e permite atualizar o estado de registros locais.
+- `public/registro.html`: coleta título, categoria, descrição, referência e coordenadas selecionadas no mapa ou pela geolocalização do dispositivo.
+
+## Bibliotecas e serviços
+
+- Leaflet 1.9.4 para mapa, marcadores e geolocalização visual.
+- OpenStreetMap como camada cartográfica, com atribuição mantida no mapa.
+- GSAP 3 + ScrollTrigger para entradas leves de conteúdo na página inicial; desativados quando o dispositivo solicita movimento reduzido.
+- Google Fonts: Space Grotesk, Manrope e DM Mono.
+
+## Dados e limitações
+
+Os registros criados são salvos na chave `urbs:reports` do `localStorage` e existem apenas no navegador/dispositivo em que foram registrados. Estados disponíveis: Novo, Em análise, Em andamento e Solucionado. Alguns pontos predefinidos são fictícios e servem apenas para demonstrar categorias, filtros e estados. Eles não são ocorrências reais de Montes Claros.
+
+Este site não tem backend, conta de usuário, sincronização entre dispositivos, canal oficial de atendimento nem integração com a Prefeitura. Não use dados pessoais ou informações sensíveis.
+
+
+## Experiência do planeta no acesso (protótipo visual)
+
+- Abra `public/login.html` ou `http://localhost/urbs/login.html` para visualizar a página imersiva.
+- Globe 3D gerado em Three.js com textura procedural estilizada, atmosfera e estrelas. A rotação muda de direção ao alternar login/cadastro.
+- GSAP controla a transição de aproximação/queda em direção ao planeta quando um formulário válido é enviado. Após a demonstração, o navegador abre `mapa.html`.
+- **Segurança**: esta implementação é somente demonstrativa, **não há login/cadastro real**, nenhuma credencial é transmitida ou armazenada. O formulário apenas valida os campos no navegador, descarta os valores e anima a transição. Para produção, integrar um backend de autenticação com sessões seguras e redirecionar exclusivamente após o servidor confirmar sucesso.
+- Respeita `prefers-reduced-motion` e contém fallback se WebGL não estiver disponível. Three.js e GSAP são carregados por CDN, exigindo internet.
