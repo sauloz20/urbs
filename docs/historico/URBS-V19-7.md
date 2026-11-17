@@ -1,0 +1,1 @@
+URBS V19.7 — remove a aba lateral Arquivo Urbano e transforma a seção Antes e Depois em um carrossel editorial centralizado. Use setas, pontos indicadores ou deslize no celular. Mantidos os pares fotográficos reais, fontes e demais seções da V19.6.

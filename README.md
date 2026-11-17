@@ -1,41 +1,33 @@
-# URBS — plataforma colaborativa urbana
+# URBS — Plataforma de Monitoramento Colaborativo Urbano
 
-Versão web acadêmica para registrar, localizar, visualizar e acompanhar demonstrações de problemas de infraestrutura urbana em Montes Claros — MG.
+Site demonstrativo e projeto acadêmico sobre infraestrutura urbana. Área piloto: Montes Claros (MG).
 
-## Executar localmente
+## Executar
 
-Na raiz do projeto, inicie um servidor estático para servir a pasta `public`:
+A aplicação estática está em `public/`. Para testar, copie `public/` para o DocumentRoot do Apache/XAMPP, ou execute um servidor HTTP estático apontando para essa pasta. Abra `index.html`.
 
-```bash
-python3 -m http.server 8000 --bind 127.0.0.1 --directory public
-```
+## Estrutura
 
-Acesse `http://127.0.0.1:8000/`. O serviço de mapas e as fontes precisam de conexão com a internet.
+- `public/*.html`: páginas do site
+- `public/assets/css/`: estilos locais
+- `public/assets/js/`: lógica da interface
+- `public/assets/images/journey/`: imagens ilustrativas de Observe, Localize e Acompanhe
+- `public/assets/images/`: demais imagens
+- `public/assets/media/`: vídeo
+- `public/assets/textures/`: texturas para experiências 3D
+- `docs/historico/`: histórico de versões
+- `docs/desenvolvimento/`: diretrizes e materiais internos
 
-## Telas
+## Transformações urbanas
 
-- `public/index.html`: apresenta a iniciativa, categorias, área piloto e fluxo de participação.
-- `public/mapa.html`: explora categorias, estados e referências de localização; exibe detalhes e permite atualizar o estado de registros locais.
-- `public/registro.html`: coleta título, categoria, descrição, referência e coordenadas selecionadas no mapa ou pela geolocalização do dispositivo.
+O comparador 16:9 utiliza registros publicados por órgãos públicos de outros municípios. Não represente tais casos como obras da URBS ou de Montes Claros. As fotos são hospedadas externamente, e seu carregamento depende das fontes originais.
 
-## Bibliotecas e serviços
+As imagens da seção **Do Olhar à Ação** são ilustrativas, geradas digitalmente, armazenadas em WebP no próprio projeto.
 
-- Leaflet 1.9.4 para mapa, marcadores e geolocalização visual.
-- OpenStreetMap como camada cartográfica, com atribuição mantida no mapa.
-- GSAP 3 + ScrollTrigger para entradas leves de conteúdo na página inicial; desativados quando o dispositivo solicita movimento reduzido.
-- Google Fonts: Space Grotesk, Manrope e DM Mono.
+## Revisão V20.2
 
-## Dados e limitações
-
-Os registros criados são salvos na chave `urbs:reports` do `localStorage` e existem apenas no navegador/dispositivo em que foram registrados. Estados disponíveis: Novo, Em análise, Em andamento e Solucionado. Alguns pontos predefinidos são fictícios e servem apenas para demonstrar categorias, filtros e estados. Eles não são ocorrências reais de Montes Claros.
-
-Este site não tem backend, conta de usuário, sincronização entre dispositivos, canal oficial de atendimento nem integração com a Prefeitura. Não use dados pessoais ou informações sensíveis.
-
-
-## Experiência do planeta no acesso (protótipo visual)
-
-- Abra `public/login.html` ou `http://localhost/urbs/login.html` para visualizar a página imersiva.
-- Globe 3D gerado em Three.js com textura procedural estilizada, atmosfera e estrelas. A rotação muda de direção ao alternar login/cadastro.
-- GSAP controla a transição de aproximação/queda em direção ao planeta quando um formulário válido é enviado. Após a demonstração, o navegador abre `mapa.html`.
-- **Segurança**: esta implementação é somente demonstrativa, **não há login/cadastro real**, nenhuma credencial é transmitida ou armazenada. O formulário apenas valida os campos no navegador, descarta os valores e anima a transição. Para produção, integrar um backend de autenticação com sessões seguras e redirecionar exclusivamente após o servidor confirmar sucesso.
-- Respeita `prefers-reduced-motion` e contém fallback se WebGL não estiver disponível. Three.js e GSAP são carregados por CDN, exigindo internet.
+- Corrigida a ordem de camadas dos cards para evitar que apareçam apenas com fundo verde.
+- Adicionados elementos `<img>` reais sobre o fundo de fallback, preservando a sobreposição editorial.
+- Organizados documentos históricos em `docs/`.
+- Arquivos CSS/JS/TS/JSON formatados com indentação de dois espaços.
+- `public/` mantém todos os caminhos relativos das páginas funcionando como antes.

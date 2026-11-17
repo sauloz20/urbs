@@ -1,11 +1,3 @@
-# Local configs and secrets
-.env
-.env.*
-!.env.example
-node_modules/
-vendor/
-*.log
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
+# A chave de navegador é publicada quando o site é aberto, mas ainda deve ter restrições no Google Cloud.
+# Não versionar acidentalmente a configuração local.
+public/assets/js/google-maps-config.js
