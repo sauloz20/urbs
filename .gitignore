@@ -1,3 +1,21 @@
-# A chave de navegador é publicada quando o site é aberto, mas ainda deve ter restrições no Google Cloud.
-# Não versionar acidentalmente a configuração local.
+# Configuração local opcional do mapa
 public/assets/js/google-maps-config.js
+
+# Dependências e arquivos gerados
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+
+# Credenciais e configuração local
+.env
+.env.*
+!.env.example
+
+# Arquivos do sistema e de editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
