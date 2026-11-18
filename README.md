@@ -2,6 +2,12 @@
 
 Site demonstrativo e projeto acadêmico sobre infraestrutura urbana. Área piloto: Montes Claros (MG).
 
+[Abrir o protótipo navegável](https://raw.githack.com/sauloz20/urbs/main/public/index.html)
+
+A demonstração abre a versão da branch `main`. Na primeira visita, selecione **Open the page**. Explore a página inicial, abra **Mapa** e escolha **Nova ocorrência** para conhecer o formulário.
+
+![Percurso pelo protótipo: página inicial, mapa e registro de ocorrência](docs/portfolio/percurso.gif)
+
 ## Executar
 
 A aplicação estática está em `public/`. Para testar, copie `public/` para o DocumentRoot do Apache/XAMPP, ou execute um servidor HTTP estático apontando para essa pasta. Abra `index.html`.
