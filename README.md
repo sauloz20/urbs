@@ -24,6 +24,10 @@ A aplicação estática está em `public/`. Para testar, copie `public/` para o 
 - `docs/historico/`: histórico de versões
 - `docs/desenvolvimento/`: diretrizes e materiais internos
 
+## Globo da tela de acesso
+
+O reflexo nos oceanos usa uma máscara costeira feita com dados do [Natural Earth](https://www.naturalearthdata.com/downloads/110m-physical-vectors/).
+
 ## Transformações urbanas
 
 O comparador 16:9 utiliza registros publicados por órgãos públicos de outros municípios. Não represente tais casos como obras da URBS ou de Montes Claros. A montagem da Rua Expedito Madruga Monte, publicada pela Prefeitura de Fortaleza, está incluída no projeto. Os demais casos carregam as imagens das fontes originais.

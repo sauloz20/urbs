@@ -72,6 +72,55 @@
             fallback();
         }
     }
+    async function addOceanReflection(currentViewer) {
+        const mask = new Image();
+        mask.src = 'assets/textures/ocean-mask.png';
+        try {
+            await mask.decode();
+        }
+        catch {
+            return;
+        }
+        if (currentViewer.isDestroyed())
+            return;
+
+        // Luz fixa em coordenadas terrestres. O reflexo muda com o ângulo da câmera.
+        const material = new C.Material({
+            fabric: {
+                uniforms: { oceanMask: mask, reflectionStrength: 0 },
+                source: `
+                    czm_material czm_getMaterial(czm_materialInput inputData) {
+                        czm_material material = czm_getDefaultMaterial(inputData);
+                        vec3 worldPosition = (czm_inverseView3D * vec4(-inputData.positionToEyeEC, 1.0)).xyz;
+                        vec3 surface = normalize(worldPosition * vec3(1.0, 1.0, 1.0067395));
+                        vec2 uv = vec2(atan(surface.y, surface.x) / czm_twoPi + .5, asin(clamp(surface.z, -1.0, 1.0)) / czm_pi + .5);
+                        float water = smoothstep(.2, .8, texture(oceanMask, uv).r);
+
+                        vec3 sun = normalize(vec3(.45, -.89, -.07));
+                        vec3 eye = normalize(czm_inverseViewRotation3D * inputData.positionToEyeEC);
+                        vec3 halfAngle = normalize(sun + eye);
+                        float alignment = max(dot(surface, halfAngle), 0.0);
+                        float shimmer = .68 * pow(alignment, 148.0) + .32 * pow(alignment, 39.0);
+                        float lit = smoothstep(0.0, .2, dot(surface, sun));
+                        float visible = smoothstep(0.0, .15, dot(surface, eye));
+                        material.diffuse = vec3(1.0, .96, .86);
+                        material.alpha = water * reflectionStrength * shimmer * lit * visible;
+                        return material;
+                    }
+                `
+            }
+        });
+        currentViewer.scene.globe.material = material;
+
+        // A textura é enviada à GPU pelo Cesium após o material entrar em uso.
+        let frames = 0;
+        const removeListener = currentViewer.scene.postRender.addEventListener(() => {
+            if (++frames === 2) {
+                material.uniforms.reflectionStrength = .44;
+                removeListener();
+            }
+        });
+    }
     function initGlobe() {
         if (!C || !host) {
             fallback();
@@ -104,6 +153,7 @@
             resizeGlobe();
             window.addEventListener('resize', resizeGlobe);
             void loadGlobeImagery(viewer);
+            void addOceanReflection(viewer);
             lastTime = performance.now();
             function animate(now) {
                 if (!viewer || entering) {
