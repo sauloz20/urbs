@@ -96,14 +96,27 @@
                         vec2 uv = vec2(atan(surface.y, surface.x) / czm_twoPi + .5, asin(clamp(surface.z, -1.0, 1.0)) / czm_pi + .5);
                         float water = smoothstep(.2, .8, texture(oceanMask, uv).r);
 
-                        vec3 sun = normalize(vec3(.45, -.89, -.07));
+                        vec3 sun = normalize(vec3(.04, -.995, -.06));
                         vec3 eye = normalize(czm_inverseViewRotation3D * inputData.positionToEyeEC);
                         vec3 halfAngle = normalize(sun + eye);
                         float alignment = max(dot(surface, halfAngle), 0.0);
-                        float shimmer = .68 * pow(alignment, 148.0) + .32 * pow(alignment, 39.0);
+                        // Alongue o brilho no sentido norte–sul e mantenha as bordas difusas.
+                        vec3 east = normalize(vec3(-surface.y, surface.x, .0001));
+                        float eastOffset = dot(east, halfAngle);
+                        float crossSpread = eastOffset * eastOffset;
+                        float core = pow(alignment, 136.0) * exp(-44.0 * crossSpread);
+                        float halo = pow(alignment, 33.0) * exp(-19.0 * crossSpread);
+
+                        // Ondulações em duas direções, com menos detalhe quando ocupam poucos pixels.
+                        float waveAcross = dot(surface, vec3(122.0, -78.0, 248.0));
+                        float waveAlong = dot(surface, vec3(68.0, 123.0, 171.0));
+                        float detail = 1.0 - smoothstep(.55, 1.65, max(fwidth(waveAcross), fwidth(waveAlong)));
+                        float ripples = sin(waveAcross + .8 * sin(waveAlong)) * cos(waveAlong);
+                        float glints = .84 + .21 * ripples * detail;
+                        float shimmer = .74 * core * glints + .30 * halo;
                         float lit = smoothstep(0.0, .2, dot(surface, sun));
                         float visible = smoothstep(0.0, .15, dot(surface, eye));
-                        material.diffuse = vec3(1.0, .96, .86);
+                        material.diffuse = mix(vec3(1.0, .85, .65), vec3(1.0, .98, .92), core);
                         material.alpha = water * reflectionStrength * shimmer * lit * visible;
                         return material;
                     }
@@ -116,7 +129,7 @@
         let frames = 0;
         const removeListener = currentViewer.scene.postRender.addEventListener(() => {
             if (++frames === 2) {
-                material.uniforms.reflectionStrength = .44;
+                material.uniforms.reflectionStrength = .62;
                 removeListener();
             }
         });
