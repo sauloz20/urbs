@@ -153,26 +153,40 @@
   filter: drop-shadow(0 0 2px #faffee) drop-shadow(0 0 4px #c6ef66) drop-shadow(0 2px 3px #07160cdd);
 }
 
+/* A legenda retoma o fundo, as linhas e a tipografia da página inicial. */
 .map-pin-guide {
+  --guide-rule: #a0b4a547;
   margin: 0 var(--map-frame-gutter, 9px) var(--map-frame-gutter, 9px);
-  padding: 12px;
-  border: 1px solid #496759;
-  border-radius: 10px;
-  background: #133226;
+  padding: clamp(14px, 2.1vw, 22px);
+  border-top: 1px solid var(--guide-rule);
+  background: #07140e;
 }
 
 .map-pin-guide h2 {
-  margin: 0 0 9px;
-  color: #f3f8ec;
-  font: 650 15px/1.2 var(--display, sans-serif);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 13px;
+  color: #efeee5;
+  font: 700 clamp(19px, 2vw, 24px)/1.12 var(--display, sans-serif);
+  letter-spacing: -.045em;
+}
+
+.map-pin-guide h2::before {
+  width: 15px;
+  height: 2px;
+  flex: 0 0 15px;
+  background: #c7f36b;
+  content: '';
 }
 
 .map-pin-guide-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(168px, 25%)), 1fr));
   margin: 0;
   padding: 0;
+  border-top: 1px solid var(--guide-rule);
+  border-left: 1px solid var(--guide-rule);
   list-style: none;
 }
 
@@ -180,22 +194,21 @@
   display: flex;
   min-width: 0;
   align-items: flex-start;
-  gap: 4px;
-  padding: 7px 6px 7px 2px;
-  border: 1px solid #416152;
-  border-radius: 7px;
-  background: #1b3a2d;
+  gap: 7px;
+  padding: 12px 10px 12px 6px;
+  border-right: 1px solid var(--guide-rule);
+  border-bottom: 1px solid var(--guide-rule);
 }
 
 .map-pin-preview {
   display: block;
-  height: 37px;
-  flex: 0 0 31px;
+  height: 39px;
+  flex: 0 0 33px;
   pointer-events: none;
 }
 
 .map-pin-preview .map-v19-pin {
-  transform: translate(-7px, -8px) rotate(-18deg) scale(.68);
+  transform: translate(-8px, -8px) rotate(-18deg) scale(.73);
 }
 
 .map-pin-guide-copy {
@@ -205,14 +218,33 @@
 
 .map-pin-guide-copy strong {
   display: block;
-  color: #f3f8ec;
-  font: 800 11px/1.25 var(--body, sans-serif);
+  color: #efeee5;
+  font: 700 14px/1.2 var(--display, sans-serif);
 }
 
 .map-pin-guide-copy p {
-  margin: 3px 0 0;
-  color: #c4d7cb;
-  font: 500 11px/1.35 var(--body, sans-serif);
+  margin: 4px 0 0;
+  color: #a0b4a5;
+  font: 500 12px/1.4 var(--body, sans-serif);
+}
+
+@media (min-width: 360px) and (max-width: 490px) {
+  .map-pin-guide-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .map-pin-guide-card {
+    gap: 4px;
+    padding-right: 7px;
+  }
+
+  .map-pin-preview {
+    flex-basis: 25px;
+  }
+
+  .map-pin-preview .map-v19-pin {
+    transform: translate(-11px, -8px) rotate(-18deg) scale(.61);
+  }
 }
 
 .map-panel .leaflet-control-zoom {
