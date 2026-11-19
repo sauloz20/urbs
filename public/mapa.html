@@ -15,8 +15,8 @@
   <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
   <link href="assets/css/style.css" rel="stylesheet"/>
   <link href="assets/css/map-arrival.css" rel="stylesheet"/>
-  <link href="assets/css/map-davi-integration-v19.css?v=1901" rel="stylesheet"/>
-  <link href="assets/css/occurrences.css?v=3" rel="stylesheet"/>
+  <link href="assets/css/map-davi-integration-v19.css?v=1902" rel="stylesheet"/>
+  <link href="assets/css/occurrences.css?v=4" rel="stylesheet"/>
   <script>
    // Rodar antes da pintura da página para manter continuidade visual entre telas.
     try {
@@ -33,7 +33,7 @@
   </script>
   <script defer="" src="assets/js/store.js?v=2">
   </script>
-  <script defer="" src="assets/js/map.js?v=1904">
+  <script defer="" src="assets/js/map.js?v=1905">
   </script>
  </head>
  <body class="app-page map-page">
@@ -136,6 +136,7 @@
       <span><i aria-hidden="true" class="legend-dot legend-analysis"></i> Em análise</span>
       <span><i aria-hidden="true" class="legend-dot legend-progress"></i> Em andamento</span>
       <span><i aria-hidden="true" class="legend-dot legend-solved"></i> Solucionado</span>
+      <span class="map-legend-note">Ícone: categoria · cor do pino: situação</span>
      </div>
     </section>
     <aside aria-labelledby="explorer-title" class="explorer-panel" id="occurrence-explorer">
@@ -151,69 +152,70 @@
        <h2 id="explorer-title">Ocorrências</h2>
        <span aria-live="polite" class="result-count" id="result-count">—</span>
       </div>
-      <div class="filter-fields">
-       <div class="filter-location">
-        <label for="location-filter">Buscar ocorrências</label>
-        <div class="search-field">
-         <span aria-hidden="true">⌕</span>
-         <input autocomplete="off" id="location-filter" placeholder="Rua, bairro ou referência" type="search"/>
+      <div class="filter-location">
+       <label for="location-filter">Buscar ocorrências</label>
+       <div class="search-field">
+        <span aria-hidden="true">⌕</span>
+        <input autocomplete="off" id="location-filter" placeholder="Rua, bairro ou referência" type="search"/>
+       </div>
+      </div>
+      <details class="map-filters">
+       <summary>
+        Filtros <span class="active-filter-count" hidden="" id="active-filter-count"></span>
+       </summary>
+       <div class="filter-fields">
+        <div>
+         <label for="category-filter">Categoria</label>
+         <select id="category-filter">
+          <option value="all">
+           Todas as categorias
+          </option>
+          <option value="Pavimentação">
+           Buracos e pavimentação
+          </option>
+          <option value="Iluminação pública">
+           Iluminação pública
+          </option>
+          <option value="Acessibilidade">
+           Calçadas e acessibilidade
+          </option>
+          <option value="Descarte irregular de resíduos">
+           Descarte irregular de resíduos
+          </option>
+          <option value="Drenagem">
+           Drenagem
+          </option>
+          <option value="Sinalização">
+           Sinalização
+          </option>
+          <option value="Outro">
+           Outro
+          </option>
+         </select>
         </div>
+        <div>
+         <label for="status-filter">Situação</label>
+         <select id="status-filter">
+          <option value="all">
+           Todas as situações
+          </option>
+          <option value="Novo">
+           Novo
+          </option>
+          <option value="Em análise">
+           Em análise
+          </option>
+          <option value="Em andamento">
+           Em andamento
+          </option>
+          <option value="Solucionado">
+           Solucionado
+          </option>
+         </select>
+        </div>
+        <button class="clear-filters" id="clear-filters" type="button">Limpar filtros</button>
        </div>
-       <div>
-        <label for="category-filter">Categoria</label>
-        <select id="category-filter">
-         <option value="all">
-          Todas as categorias
-         </option>
-         <option value="Pavimentação">
-          Buracos e pavimentação
-         </option>
-         <option value="Iluminação pública">
-          Iluminação pública
-         </option>
-         <option value="Acessibilidade">
-          Calçadas e acessibilidade
-         </option>
-         <option value="Descarte irregular de resíduos">
-          Descarte irregular de resíduos
-         </option>
-         <option value="Drenagem">
-          Drenagem
-         </option>
-         <option value="Sinalização">
-          Sinalização
-         </option>
-         <option value="Outro">
-          Outro
-         </option>
-        </select>
-       </div>
-       <div>
-        <label for="status-filter">Situação</label>
-        <select id="status-filter">
-         <option value="all">
-          Todas as situações
-         </option>
-         <option value="Novo">
-          Novo
-         </option>
-         <option value="Em análise">
-          Em análise
-         </option>
-         <option value="Em andamento">
-          Em andamento
-         </option>
-         <option value="Solucionado">
-          Solucionado
-         </option>
-        </select>
-       </div>
-       <button class="clear-filters" id="clear-filters" type="button">Limpar filtros</button>
-      </div>
-      <div class="report-list-heading">
-       <span>Resultados</span>
-       <span id="list-count">—</span>
-      </div>
+      </details>
       <div aria-label="Lista de ocorrências" class="report-list" id="report-list"></div>
       <div class="empty-state" hidden="" id="empty-state">
        <h3>Nenhuma ocorrência encontrada</h3>

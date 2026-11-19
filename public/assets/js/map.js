@@ -5,14 +5,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!mapElement || !data)
         return;
     const center = [-16.7286, -43.8578];
-    const categoryColors = {
-        "Pavimentação": "#b77c43",
-        "Iluminação pública": "#799e32",
-        "Acessibilidade": "#387f79",
-        "Descarte irregular de resíduos": "#77619a",
-        "Drenagem": "#4f7ca3",
-        "Sinalização": "#bd7b4a",
-        "Outro": "#637269"
+    const categorySymbols = new Map([
+        ["Pavimentação", "║"],
+        ["Iluminação pública", "✦"],
+        ["Acessibilidade", "♿︎"],
+        ["Descarte irregular de resíduos", "▤"],
+        ["Drenagem", "≋"],
+        ["Sinalização", "!"]
+    ]);
+    const statusColors = {
+        "Novo": "#b8e954",
+        "Em análise": "#e5a94a",
+        "Em andamento": "#53c4aa",
+        "Solucionado": "#6dae71"
     };
     const statusClass = {
         "Novo": "",
@@ -26,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const list = document.getElementById("report-list");
     const emptyState = document.getElementById("empty-state");
     const resultCount = document.getElementById("result-count");
-    const listCount = document.getElementById("list-count");
+    const activeFilterCount = document.getElementById("active-filter-count");
     const clearButton = document.getElementById("clear-filters");
     const locateButton = document.getElementById("locate-me");
     const liveRegion = document.getElementById("map-live-region");
@@ -195,6 +200,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const card = makeElement("article", "report-card");
         card.dataset.reportId = report.id;
         const topline = makeElement("div", "report-card-topline");
+        const category = makeElement("span", "report-card-category");
+        const symbol = makeElement("span", "report-card-symbol", categorySymbols.get(report.category) || "•");
+        symbol.setAttribute("aria-hidden", "true");
+        category.append(symbol, makeElement("span", "", report.category));
+        card.append(category);
         if (report.demo)
             topline.append(makeElement("span", "demo-badge", "EXEMPLO"));
         const badge = makeElement("span", `status-pill ${statusClass[report.status] || ""}`, report.status);
@@ -218,6 +228,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return card;
     }
+    function makeReportMarker(report) {
+        const pin = makeElement("span", report.demo ? "map-v19-pin map-v19-demo-pin" : "map-v19-pin");
+        pin.setAttribute("aria-hidden", "true");
+        pin.style.setProperty("--pin-color", statusColors[report.status] || statusColors.Novo);
+        pin.append(makeElement("span", "map-pin-head", categorySymbols.get(report.category) || "•"));
+        const icon = L.divIcon({
+            className: "map-v19-pin-holder",
+            html: pin.outerHTML,
+            iconSize: [38, 46], iconAnchor: [19, 42], popupAnchor: [0, -39]
+        });
+        const label = `${report.title} · ${report.category} · ${report.status}`;
+        const marker = L.marker([report.lat, report.lng], { icon, keyboard: true, title: label }).addTo(markerLayer);
+        marker.getElement()?.setAttribute("aria-label", label);
+        return marker;
+    }
     function render() {
         const reports = getFilteredReports();
         markerLayer.clearLayers();
@@ -225,28 +250,15 @@ document.addEventListener("DOMContentLoaded", () => {
         list.replaceChildren();
         reports.forEach((report) => {
             list.append(makeReportCard(report));
-            // Pinos em gota por situação, adaptados da interface do TCC-Project.
-            const pinColor = {
-                'Novo': '#b8e954', 'Em análise': '#e5a94a',
-                'Em andamento': '#53c4aa', 'Solucionado': '#6dae71'
-            }[report.status] || '#b8e954';
-            const pin = document.createElement('span');
-            pin.className = 'map-v19-pin' + (report.demo ? ' map-v19-demo-pin' : '');
-            pin.style.setProperty('--pin-color', pinColor);
-            const icon = L.divIcon({
-                className: 'map-v19-pin-holder',
-                html: pin.outerHTML,
-                iconSize: [30, 38], iconAnchor: [15, 36], popupAnchor: [0, -33]
-            });
-            const marker = L.marker([report.lat, report.lng], {
-                icon, keyboard: true, title: report.title, alt: report.title
-            }).addTo(markerLayer);
+            const marker = makeReportMarker(report);
             marker.bindPopup(popupContent(report), { maxWidth: 260 });
             marker.on("popupopen", () => selectReport(report.id));
             markersById.set(report.id, marker);
         });
-        resultCount.textContent = String(reports.length);
-        listCount.textContent = `${reports.length} ${reports.length === 1 ? "item" : "itens"}`;
+        resultCount.textContent = `${reports.length} ${reports.length === 1 ? "registro" : "registros"}`;
+        const active = [categoryFilter, statusFilter].filter((field) => field?.value && field.value !== "all").length;
+        activeFilterCount.hidden = active === 0;
+        activeFilterCount.textContent = String(active);
         emptyState.hidden = reports.length > 0;
         if (reports.length > 0 && markerLayer.getBounds().isValid()) {
             map.fitBounds(markerLayer.getBounds().pad(.22), { maxZoom: 14, animate: false });
@@ -264,7 +276,9 @@ document.addEventListener("DOMContentLoaded", () => {
             card.querySelector("[data-focus-id]").setAttribute("aria-pressed", String(card.dataset.reportId === id));
         });
         markersById.forEach((marker, markerId) => {
-            marker.getElement()?.classList.toggle("is-selected", markerId === id);
+            const selected = markerId === id;
+            marker.getElement()?.classList.toggle("is-selected", selected);
+            marker.setZIndexOffset(selected ? 1000 : 0);
         });
     }
     function focusReport(id, animate = true) {

@@ -213,9 +213,10 @@
 .legend-progress { background: #53c4aa; }
 .legend-solved { background: #6dae71; }
 
-.leaflet-marker-icon.is-selected .map-v19-pin {
-  border-color: #193c28;
-  box-shadow: 0 0 0 3px var(--workspace-accent), 0 0 0 6px #244d3166;
+.map-legend .map-legend-note {
+  margin-left: auto;
+  color: #c4d7cb;
+  font-size: 10px;
 }
 
 .explorer-panel {
@@ -246,8 +247,36 @@
 .result-count {
   min-width: 30px;
   height: 30px;
+  padding: 0 8px;
   border-radius: 7px;
   background: #e3efd9;
+}
+
+.map-filters {
+  margin: 9px 0 11px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 8px;
+  background: #fcfdfb;
+}
+
+.map-filters summary {
+  padding: 9px;
+  color: var(--workspace-text);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.active-filter-count:not([hidden]) {
+  display: inline-grid;
+  min-width: 18px;
+  height: 18px;
+  place-items: center;
+  margin-left: 5px;
+  border-radius: 5px;
+  background: var(--workspace-accent);
+  color: var(--workspace-text);
+  font-size: 10px;
 }
 
 .filter-fields {
@@ -255,6 +284,7 @@
   min-width: 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 9px;
+  padding: 0 9px 8px;
 }
 
 .filter-location,
@@ -262,7 +292,8 @@
   grid-column: 1 / -1;
 }
 
-.filter-fields label {
+.filter-fields label,
+.filter-location label {
   display: block;
   margin: 0 0 5px;
   color: var(--workspace-text);
@@ -290,14 +321,8 @@
   font-size: 12px;
 }
 
-.report-list-heading {
-  margin: 11px 0 8px;
-  color: var(--workspace-muted);
-  font-size: 11px;
-}
-
 .report-list {
-  max-height: clamp(240px, 41svh, 470px);
+  max-height: clamp(245px, 48svh, 505px);
   gap: 7px;
   padding-right: 4px;
   scrollbar-width: thin;
@@ -322,6 +347,28 @@
   justify-content: flex-start;
   flex-wrap: wrap;
   gap: 5px;
+}
+
+.report-card-category {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--workspace-muted);
+  font: 700 11px/1.25 var(--body);
+  overflow-wrap: anywhere;
+}
+
+.report-card-symbol {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  border-radius: 6px;
+  background: #e7f0e4;
+  color: #234d37;
+  font: 750 14px/1 system-ui, sans-serif;
 }
 
 .report-card .status-pill,
@@ -672,6 +719,11 @@
   .map-legend {
     gap: 7px 14px;
     padding-block: 8px;
+  }
+
+  .map-legend .map-legend-note {
+    flex-basis: 100%;
+    margin-left: 0;
   }
 
   .map-sheet-bar {

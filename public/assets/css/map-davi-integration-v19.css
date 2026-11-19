@@ -62,27 +62,45 @@
 .map-v19-pin {
   display: block;
   position: relative;
-  width: 27px;
-  height: 31px;
-  background: var(--pin-color,#b8e954);
-  border: 2.5px solid #173326;
-  border-radius: 50% 50% 50% 4px;
-  transform: rotate(-45deg);
-  filter: drop-shadow(0 5px 5px rgba(9,25,18,.32));
+  width: 38px;
+  height: 46px;
+  filter: drop-shadow(0 3px 3px #07160cb3);
   transition: filter .18s ease;
 }
-.map-v19-pin::before {
+.map-v19-pin::after {
   content: '';
   position: absolute;
-  width: 9px;
-  height: 9px;
-  top: 7px;
-  left: 7px;
-  background: #183124;
-  border-radius: 50%;
+  top: 28px;
+  left: 13px;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  border-radius: 1px;
+  border-right: 1px solid #102b20;
+  border-bottom: 1px solid #102b20;
+  background: var(--pin-color, #b8e954);
 }
-.map-v19-demo-pin::before {
-  background: #fff;
+.map-pin-head {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin: 0 auto;
+  place-items: center;
+  border: 3px solid var(--pin-color, #b8e954);
+  border-radius: 50%;
+  background: #122d22;
+  color: #fcfff6;
+  font: 750 19px/1 system-ui, sans-serif;
+  box-shadow: 0 0 0 1px #102b20;
+}
+.map-v19-demo-pin .map-pin-head {
+  border-style: dashed;
+}
+.leaflet-marker-icon.is-selected .map-pin-head,
+.leaflet-marker-icon:focus-visible .map-pin-head {
+  box-shadow: 0 0 0 1px #102b20, 0 0 0 4px #faffee, 0 0 0 7px #aac95cbb;
 }
 .leaflet-marker-icon:hover .map-v19-pin {
   filter: drop-shadow(0 8px 10px rgba(9,25,18,.55));
@@ -133,3 +151,4 @@
     transition: none;
   }
 }
+
