@@ -383,6 +383,66 @@
   font-size: 12px;
 }
 
+.report-management {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.report-management .status-select {
+  margin: 0;
+}
+
+.report-action {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid #c4d5c5;
+  border-radius: 6px;
+  color: #284c36;
+  background: #fff;
+  font: 750 12px/1 var(--body);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.report-action:hover {
+  border-color: #7f9d7b;
+  background: #eef5ec;
+}
+
+.report-action.report-action-delete {
+  color: #852f2b;
+}
+
+.report-action-delete:hover {
+  border-color: #c98f8b;
+  background: #fff1ef;
+}
+
+.report-action-feedback:not(:empty) {
+  margin: 10px 13px 0;
+  padding: 8px 10px;
+  border-radius: 7px;
+  color: #244e26;
+  background: #e8f5d8;
+  font: 700 12px/1.4 var(--body);
+}
+
+.report-action-feedback.is-error:not(:empty) {
+  color: #852f2b;
+  background: #fff1ef;
+}
+
+.report-action-feedback:empty {
+  margin: 0;
+}
+
 .empty-state {
   border-radius: 9px;
 }
@@ -554,6 +614,10 @@
   box-shadow: 0 4px 10px #21412624;
 }
 
+#report-submit-label {
+  font: inherit;
+}
+
 .registration-footer .submit-button:hover {
   color: #19351d;
   background: #d5f7a2;
@@ -677,3 +741,4 @@
     padding-inline: 9px;
   }
 }
+

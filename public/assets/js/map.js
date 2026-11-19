@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearButton = document.getElementById("clear-filters");
     const locateButton = document.getElementById("locate-me");
     const liveRegion = document.getElementById("map-live-region");
+    const actionFeedback = document.getElementById("report-action-feedback");
     const explorer = document.getElementById("occurrence-explorer");
     const explorerToggle = document.getElementById("explorer-toggle");
     const isMobile = window.matchMedia("(max-width: 760px)");
@@ -140,7 +141,41 @@ document.addEventListener("DOMContentLoaded", () => {
         wrapper.append(makeElement("span", "popup-meta", `${report.address || "Localização marcada no mapa"} · ${data.formatDate(report.createdAt)} · ${report.status}`));
         if (report.demo)
             wrapper.append(makeElement("span", "demo-badge", "EXEMPLO FICTÍCIO"));
+        else
+            wrapper.append(makeReportActions(report));
         return wrapper;
+    }
+    function showActionFeedback(message, error = false) {
+        actionFeedback.classList.toggle("is-error", error);
+        actionFeedback.textContent = message;
+    }
+    function makeReportActions(report) {
+        const actions = makeElement("div", "report-management");
+        const edit = makeElement("a", "report-action", "Editar");
+        const remove = makeElement("button", "report-action report-action-delete", "Excluir");
+        edit.href = `registro.html?${new URLSearchParams({ editar: report.id })}`;
+        edit.setAttribute("aria-label", `Editar ocorrência: ${report.title}`);
+        remove.type = "button";
+        remove.setAttribute("aria-label", `Excluir ocorrência: ${report.title}`);
+        remove.addEventListener("click", () => {
+            if (!window.confirm(`Excluir “${report.title}”? Esta ação não pode ser desfeita.`))
+                return;
+            const result = data.deleteReport(report.id);
+            if (!result.ok) {
+                if (result.reason === "missing")
+                    render();
+                showActionFeedback(result.reason === "missing"
+                    ? "Esta ocorrência já não está disponível neste navegador."
+                    : "Não foi possível excluir a ocorrência neste navegador.", true);
+                return;
+            }
+            render();
+            showActionFeedback("Ocorrência excluída deste navegador.");
+            const focusTarget = isMobile.matches && explorer?.dataset.expanded === "false" ? explorerToggle : locationFilter;
+            focusTarget?.focus({ preventScroll: true });
+        });
+        actions.append(edit, remove);
+        return actions;
     }
     function makeStatusSelect(report) {
         const select = document.createElement("select");
@@ -176,8 +211,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const meta = makeElement("div", "report-card-meta");
         meta.textContent = report.address || "Ponto marcado no mapa";
         card.append(meta);
-        if (!report.demo)
-            card.append(makeStatusSelect(report));
+        if (!report.demo) {
+            const actions = makeReportActions(report);
+            actions.append(makeStatusSelect(report));
+            card.append(actions);
+        }
         return card;
     }
     function render() {
@@ -294,14 +332,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
     });
     render();
-    const newReportId = new URLSearchParams(window.location.search).get("novo");
+    window.addEventListener("storage", (event) => {
+        if (event.key === data.STORAGE_KEY || event.key === null)
+            render();
+    });
+    window.addEventListener("pageshow", (event) => {
+        if (event.persisted)
+            render();
+    });
+    const params = new URLSearchParams(window.location.search);
+    const editedReportId = params.get("editado");
+    const requestedReportId = editedReportId || params.get("novo");
     window.setTimeout(() => {
         map.invalidateSize();
-        if (newReportId && focusReport(newReportId, false)) {
-            if (liveRegion)
+        if (requestedReportId && focusReport(requestedReportId, false)) {
+            if (editedReportId)
+                showActionFeedback("Alterações salvas. Ocorrência selecionada no mapa.");
+            else if (liveRegion)
                 liveRegion.textContent = "Registro salvo neste navegador. Ocorrência selecionada no mapa.";
             mapElement.scrollIntoView({ block: "nearest", behavior: "instant" });
         }
     }, 120);
 });
+
 

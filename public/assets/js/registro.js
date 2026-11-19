@@ -9,26 +9,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const description = document.getElementById("description");
     const descriptionCount = document.getElementById("description-count");
     const categorySelect = document.getElementById("category");
-    if (!mapElement || !form || !window.UrbsData)
+    const data = window.UrbsData;
+    if (!mapElement || !form || !data)
         return;
-    if (!window.L) {
-        coordinates.textContent = "O mapa não carregou. Você pode tentar novamente após recarregar a página.";
-        feedback.textContent = "Para salvar, a localização precisa ser selecionada em um mapa disponível.";
-        feedback.className = "form-feedback is-error";
-        if (useLocation)
-            useLocation.disabled = true;
-        return;
+    const params = new URLSearchParams(window.location.search);
+    const editId = params.get("editar");
+    const isEditing = editId !== null;
+    const existing = isEditing ? data.getReport(editId) : null;
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (isEditing) {
+        document.title = "Editar ocorrência — URBS";
+        document.getElementById("report-page-title").textContent = "Editar ocorrência";
+        document.getElementById("report-submit-label").textContent = "Salvar alterações";
+        if (!existing) {
+            submitButton.disabled = true;
+            form.addEventListener("submit", (event) => event.preventDefault());
+            feedback.textContent = "Esta ocorrência não está disponível neste navegador. Volte ao mapa para consultar seus registros.";
+            feedback.className = "form-feedback is-error";
+            return;
+        }
     }
     const defaultCenter = [-16.7286, -43.8578];
-    const map = L.map(mapElement, { scrollWheelZoom: false, zoomControl: false }).setView(defaultCenter, 13);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-    L.control.zoom({ position: "bottomright" }).addTo(map);
+    const map = window.L
+        ? L.map(mapElement, { scrollWheelZoom: false, zoomControl: false }).setView(defaultCenter, 13)
+        : null;
+    if (map) {
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        L.control.zoom({ position: "bottomright" }).addTo(map);
+    }
+    else {
+        coordinates.textContent = "O mapa não carregou. Você pode tentar novamente após recarregar a página.";
+        if (useLocation)
+            useLocation.disabled = true;
+    }
     let marker = null;
     let saved = false;
-    const submitButton = form.querySelector('button[type="submit"]');
     window.addEventListener("pageshow", (event) => {
         if (event.persisted && saved) {
             saved = false;
@@ -38,29 +56,53 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     function setPoint(latlng) {
-        if (marker)
-            marker.setLatLng(latlng);
-        else
-            marker = L.marker(latlng, { draggable: true, title: "Localização da ocorrência" }).addTo(map);
-        latitudeInput.value = Number(latlng.lat).toFixed(6);
-        longitudeInput.value = Number(latlng.lng).toFixed(6);
-        coordinates.textContent = `Ponto marcado · ${latitudeInput.value}, ${longitudeInput.value}`;
+        if (map) {
+            if (marker)
+                marker.setLatLng(latlng);
+            else
+                marker = L.marker(latlng, { draggable: true, title: "Localização da ocorrência" }).addTo(map);
+            marker.off("dragend").on("dragend", () => setPoint(marker.getLatLng()));
+        }
+        latitudeInput.value = String(latlng.lat);
+        longitudeInput.value = String(latlng.lng);
+        const label = map ? "Ponto marcado" : "Ponto mantido";
+        coordinates.textContent = `${label} · ${Number(latlng.lat).toFixed(6)}, ${Number(latlng.lng).toFixed(6)}`;
         coordinates.classList.add("is-picked");
-        marker.off("dragend").on("dragend", () => setPoint(marker.getLatLng()));
         feedback.textContent = "";
         feedback.className = "form-feedback";
     }
-    map.on("click", (event) => setPoint(event.latlng));
-    window.setTimeout(() => map.invalidateSize(), 120);
-    const requestedCategory = new URLSearchParams(window.location.search).get("categoria");
-    if (requestedCategory && [...categorySelect.options].some((option) => option.value === requestedCategory)) {
-        categorySelect.value = requestedCategory;
+    map?.on("click", (event) => setPoint(event.latlng));
+    if (map)
+        window.setTimeout(() => map.invalidateSize(), 120);
+    if (existing) {
+        document.getElementById("title").value = existing.title;
+        document.getElementById("address").value = existing.address;
+        description.value = existing.description;
+        descriptionCount.textContent = String(description.value.length);
+        if (![...categorySelect.options].some((option) => option.value === existing.category)) {
+            const option = document.createElement("option");
+            option.value = existing.category;
+            option.textContent = existing.category;
+            categorySelect.append(option);
+        }
+        categorySelect.value = existing.category;
+        setPoint({ lat: existing.lat, lng: existing.lng });
+        map?.setView([existing.lat, existing.lng], 16);
+        if (!map)
+            feedback.textContent = "O mapa não carregou. Você pode salvar as alterações mantendo o ponto atual.";
+    }
+    else {
+        const requestedCategory = params.get("categoria");
+        if (requestedCategory && [...categorySelect.options].some((option) => option.value === requestedCategory))
+            categorySelect.value = requestedCategory;
     }
     description?.addEventListener("input", () => {
         if (descriptionCount)
             descriptionCount.textContent = String(description.value.length);
     });
     useLocation?.addEventListener("click", () => {
+        if (!map)
+            return;
         if (!navigator.geolocation) {
             feedback.textContent = "A geolocalização não está disponível neste dispositivo. Selecione um ponto no mapa.";
             feedback.className = "form-feedback is-error";
@@ -89,34 +131,49 @@ document.addEventListener("DOMContentLoaded", () => {
         if (saved || !form.reportValidity())
             return;
         if (!latitudeInput.value || !longitudeInput.value) {
-            feedback.textContent = "Selecione um ponto no mapa antes de salvar.";
+            feedback.textContent = map
+                ? "Selecione um ponto no mapa antes de salvar."
+                : "O mapa não carregou. Recarregue a página para marcar a localização.";
             feedback.className = "form-feedback is-error";
             coordinates.setAttribute("tabindex", "-1");
             coordinates.focus();
             return;
         }
         const formData = new FormData(form);
-        const result = window.UrbsData.saveReport({
+        const fields = {
             title: String(formData.get("title") || "").trim(),
             category: String(formData.get("category") || "Outro"),
             address: String(formData.get("address") || "").trim(),
             description: String(formData.get("description") || "").trim(),
             lat: Number(formData.get("latitude")),
             lng: Number(formData.get("longitude"))
-        });
+        };
+        if (!fields.title || !fields.description) {
+            feedback.textContent = "Preencha o título e a descrição da ocorrência.";
+            feedback.className = "form-feedback is-error";
+            document.getElementById(fields.title ? "description" : "title").focus();
+            return;
+        }
+        const result = isEditing ? data.updateReport(editId, fields) : data.saveReport(fields);
         if (!result.ok) {
-            feedback.textContent = result.reason === "storage"
-                ? "Não foi possível salvar neste navegador. Verifique o espaço disponível ou as permissões de armazenamento."
-                : "Confira o conteúdo do formulário e selecione um ponto válido no mapa.";
+            const messages = {
+                missing: "Esta ocorrência não está mais disponível. Volte ao mapa para consultar seus registros.",
+                storage: "Não foi possível salvar neste navegador. Verifique o espaço ou as permissões de armazenamento.",
+                invalid: "Confira o conteúdo do formulário e selecione um ponto válido no mapa."
+            };
+            feedback.textContent = messages[result.reason];
             feedback.className = "form-feedback is-error";
             return;
         }
         saved = true;
         submitButton.disabled = true;
-        feedback.textContent = "Registro salvo somente neste navegador. Abrindo o mapa…";
+        feedback.textContent = isEditing
+            ? "Alterações salvas. Abrindo a ocorrência no mapa…"
+            : "Registro salvo somente neste navegador. Abrindo o mapa…";
         feedback.className = "form-feedback is-success";
-        const params = new URLSearchParams({ novo: result.report.id });
-        window.setTimeout(() => { window.location.href = `mapa.html?${params}`; }, 700);
+        const destination = new URLSearchParams({ [isEditing ? "editado" : "novo"]: result.report.id });
+        window.setTimeout(() => { window.location.href = `mapa.html?${destination}`; }, 700);
     });
 });
+
 

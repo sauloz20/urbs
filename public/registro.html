@@ -14,12 +14,12 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
   <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
   <link href="assets/css/style.css" rel="stylesheet"/>
-  <link href="assets/css/occurrences.css?v=2" rel="stylesheet"/>
+  <link href="assets/css/occurrences.css?v=3" rel="stylesheet"/>
   <script defer="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
   </script>
-  <script defer="" src="assets/js/store.js">
+  <script defer="" src="assets/js/store.js?v=2">
   </script>
-  <script defer="" src="assets/js/registro.js?v=1903">
+  <script defer="" src="assets/js/registro.js?v=1904">
   </script>
  </head>
  <body class="app-page form-page-body">
@@ -56,7 +56,7 @@
   </header>
   <main class="form-page" id="registro-conteudo">
    <div class="form-heading">
-    <h1>Registrar ocorrência</h1>
+    <h1 id="report-page-title">Registrar ocorrência</h1>
     <span class="form-context"><span aria-hidden="true" class="status-dot"></span> Montes Claros, MG</span>
    </div>
    <form class="report-form" id="report-form">
@@ -123,7 +123,7 @@
      <div class="form-actions">
       <a class="text-link" href="mapa.html">Cancelar</a>
       <button class="submit-button occurrence-primary" type="submit">
-       Salvar ocorrência <span aria-hidden="true">↗</span>
+       <span id="report-submit-label">Salvar ocorrência</span> <span aria-hidden="true">↗</span>
       </button>
      </div>
     </div>
@@ -140,4 +140,5 @@
   </footer>
  </body>
 </html>
+
 
