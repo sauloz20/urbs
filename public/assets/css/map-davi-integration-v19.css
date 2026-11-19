@@ -59,63 +59,98 @@
   background: transparent;
   border: 0;
 }
+/* Alfinete tipo taça. A ponta metálica marca a coordenada no mapa. */
 .map-v19-pin {
-  display: block;
+  --plastic: var(--pin-color, #cbd4ca);
+  --plastic-light: color-mix(in srgb, var(--plastic) 65%, white);
+  --plastic-shadow: color-mix(in srgb, var(--plastic) 64%, #152622);
   position: relative;
-  width: 38px;
-  height: 46px;
-  filter: drop-shadow(0 3px 3px #07160cb3);
+  display: block;
+  width: 44px;
+  height: 48px;
+  transform: rotate(-18deg);
+  transform-origin: 50% 46px;
+  filter: drop-shadow(0 2px 2px #07160cb3);
   transition: filter .18s ease;
 }
-.map-v19-pin::after {
+
+.map-v19-pin::before {
+  position: absolute;
+  top: 27px;
+  left: 20px;
+  width: 4px;
+  height: 19px;
+  clip-path: polygon(0 0, 100% 0, 76% 85%, 50% 100%, 17% 88%);
+  background: linear-gradient(90deg, #3d4e47, #fbfdfa 43%, #929f9b 68%, #253831);
   content: '';
-  position: absolute;
-  top: 28px;
-  left: 13px;
-  width: 12px;
-  height: 12px;
-  transform: rotate(45deg);
-  border-radius: 1px;
-  border-right: 1px solid #102b20;
-  border-bottom: 1px solid #102b20;
-  background: var(--pin-color, #cbd4ca);
 }
-.map-pin-head {
-  position: relative;
+
+.map-v19-pin::after {
+  position: absolute;
+  top: 19px;
+  left: 8px;
   z-index: 1;
-  display: grid;
-  width: 36px;
-  height: 36px;
-  margin: 0 auto;
-  place-items: center;
-  border: 2px solid #102b20;
+  width: 28px;
+  height: 13px;
+  border: 1px solid #15262278;
   border-radius: 50%;
-  background: var(--pin-color, #cbd4ca);
-  color: #102b20;
-  font: 750 19px/1 system-ui, sans-serif;
-  box-shadow: 0 0 0 1px #faffee;
+  background: var(--plastic);
+  background-image: linear-gradient(150deg, var(--plastic-light), var(--plastic) 50%, var(--plastic-shadow));
+  box-shadow: inset 0 -2px 1px #102b202e;
+  content: '';
 }
-.map-pin-head::after {
+
+.map-pin-stem {
   position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 11px;
-  height: 11px;
-  border: 2px solid #102b20;
+  top: 8px;
+  left: 12px;
+  z-index: 2;
+  width: 20px;
+  height: 21px;
+  border-radius: 0 0 45% 45% / 0 0 16% 16%;
+  clip-path: polygon(5% 0, 95% 0, 77% 36%, 72% 64%, 97% 100%, 3% 100%, 28% 64%, 23% 36%);
+  background: var(--plastic);
+  background-image: linear-gradient(90deg, var(--plastic-shadow), var(--plastic) 32%, var(--plastic-light) 51%, var(--plastic) 65%, var(--plastic-shadow));
+}
+
+.map-pin-head {
+  position: absolute;
+  top: 0;
+  left: 8px;
+  z-index: 3;
+  width: 28px;
+  height: 13px;
+  border: 1px solid #15262285;
+  border-radius: 50%;
+  background: var(--plastic);
+  background-image: radial-gradient(ellipse at 35% 22%, var(--plastic-light), var(--plastic) 64%, var(--plastic-shadow));
+  box-shadow: inset 0 -2px 1px #102b2026;
+}
+
+.map-pin-status {
+  position: absolute;
+  top: 13px;
+  right: 2px;
+  z-index: 4;
+  width: 9px;
+  height: 9px;
+  border: 1px solid #102b20;
   border-radius: 50%;
   background: var(--pin-status, #b8e954);
   box-shadow: 0 0 0 1px #faffee;
-  content: '';
 }
+
 .map-v19-demo-pin .map-pin-head {
   border-style: dashed;
 }
-.leaflet-marker-icon.is-selected .map-pin-head,
-.leaflet-marker-icon:focus-visible .map-pin-head {
-  box-shadow: 0 0 0 1px #faffee, 0 0 0 4px #e7ffb9, 0 0 0 7px #aac95cbb;
-}
+
 .leaflet-marker-icon:hover .map-v19-pin {
-  filter: drop-shadow(0 8px 10px rgba(9,25,18,.55));
+  filter: drop-shadow(0 3px 3px #07160cdd);
+}
+
+.leaflet-marker-icon.is-selected .map-v19-pin,
+.leaflet-marker-icon:focus-visible .map-v19-pin {
+  filter: drop-shadow(0 0 2px #faffee) drop-shadow(0 0 4px #c6ef66) drop-shadow(0 2px 3px #07160cdd);
 }
 .map-panel .leaflet-control-zoom {
   border: 1px solid #243d2b !important;

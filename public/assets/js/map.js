@@ -237,11 +237,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const appearance = categoryMarkers.get(report.category) || otherCategory;
         pin.style.setProperty("--pin-color", appearance.color);
         pin.style.setProperty("--pin-status", statusColors[report.status] || statusColors.Novo);
-        pin.append(makeElement("span", "map-pin-head", appearance.symbol));
+        pin.append(
+            makeElement("span", "map-pin-stem"),
+            makeElement("span", "map-pin-head"),
+            makeElement("span", "map-pin-status")
+        );
         const icon = L.divIcon({
             className: "map-v19-pin-holder",
             html: pin.outerHTML,
-            iconSize: [38, 46], iconAnchor: [19, 42], popupAnchor: [0, -39]
+            iconSize: [44, 48], iconAnchor: [22, 46], popupAnchor: [8, -45]
         });
         const label = `${report.title} · ${report.category} · ${report.status}`;
         const marker = L.marker([report.lat, report.lng], { icon, keyboard: true, title: label }).addTo(markerLayer);
