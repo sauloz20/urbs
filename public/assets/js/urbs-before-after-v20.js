@@ -8,40 +8,44 @@
     const curitibaFrames = { before: [.055, .495], after: [.555, .995] };
     const cases = [
         {
-            title: 'Rua Clothilde Hachenberg Monastier',
+            title: 'Pavimentação de vias locais',
+            thumbnail: 'ASFALTO',
             category: 'PAVIMENTAÇÃO',
             location: 'CURITIBA / PR · TATUQUARA',
-            description: 'O trecho recebeu pavimentação asfáltica, drenagem, meio-fio e sinalização. A comparação reúne fotografias documentadas pela Prefeitura de Curitiba.',
+            description: 'Observe as mudanças no piso, no meio-fio e na sinalização. As fotos documentam a pavimentação da Rua Clothilde Hachenberg Monastier.',
             photo: 'https://mid-noticias.curitiba.pr.gov.br/2024/00441623.jpg',
             frames: curitibaFrames,
             source: 'https://www.curitiba.pr.gov.br/noticias/antes-e-depois-veja-como-ficou-rua-de-curitiba-transformada-por-obra-da-prefeitura/73095',
             metrics: [['EXTENSÃO', '90 m'], ['INTERVENÇÃO', 'Asfalto'], ['STATUS', 'Concluída']]
         },
         {
-            title: 'Rua Lionidetti Sovinski Pacheco',
+            title: 'Escoamento da água da chuva',
+            thumbnail: 'DRENAGEM',
             category: 'DRENAGEM E PAVIMENTAÇÃO',
             location: 'CURITIBA / PR · LAMENHA PEQUENA',
-            description: 'A antiga via de saibro passou por uma obra de pavimentação e drenagem, com galerias para água pluvial e sinalização. Registros oficiais de Curitiba.',
+            description: 'A Rua Lionidetti Sovinski Pacheco passou de saibro a asfalto. A obra incluiu galerias pluviais para escoar a água da chuva.',
             photo: 'https://mid-noticias.curitiba.pr.gov.br/2024/00433866.jpg',
             frames: curitibaFrames,
             source: 'https://www.curitiba.pr.gov.br/noticias/antes-e-depois-rua-de-curitiba-e-transformada-com-asfalto-e-sistema-de-drenagem/72588',
             metrics: [['ANTES', 'Saibro'], ['DEPOIS', 'Asfalto'], ['STATUS', 'Concluída']]
         },
         {
-            title: 'Rua Expedito Madruga Monte',
+            title: 'Calçadas e saneamento',
+            thumbnail: 'CALÇADAS',
             category: 'URBANIZAÇÃO',
             location: 'FORTALEZA / CE',
-            description: 'Comparação divulgada pela Prefeitura de Fortaleza no contexto de obras de infraestrutura e drenagem em vias urbanas.',
+            description: 'Na Rua Expedito Madruga Monte, a urbanização reuniu pavimentação, calçadas e obras de saneamento.',
             photo: 'assets/images/comparacoes/expedito-madruga-monte.jpg',
             frames: { before: [.04, .44], after: [.60, 1], width: .72 },
             source: 'https://www.fortaleza.ce.gov.br/noticias/obras-de-drenagem-e-saneamento-vao-beneficiar-65-ruas-no-canindezinho',
             metrics: [['TIPO', 'Urbanização'], ['REGIÃO', 'Fortaleza'], ['FONTE', 'Prefeitura']]
         },
         {
-            title: 'Rua Manoel Miguel Alves Filho',
+            title: 'Pavimentação e drenagem integradas',
+            thumbnail: 'PAVIMENTAÇÃO',
             category: 'PAVIMENTAÇÃO E DRENAGEM',
             location: 'CURITIBA / PR · UMBARÁ',
-            description: 'Rua contemplada pelo programa Asfalto no Saibro, com pavimentação em 742 metros e implantação de drenagem, incluindo galerias pluviais e meio-fio.',
+            description: 'Na Rua Manoel Miguel Alves Filho, 742 metros receberam pavimentação, meio-fio e galerias pluviais.',
             photo: 'https://mid-noticias.curitiba.pr.gov.br/2024/capa/00440018.jpg',
             frames: curitibaFrames,
             source: 'https://www.curitiba.pr.gov.br/noticias/prefeitura-de-curitiba-troca-saibro-pelo-asfalto-e-melhora-a-vida-de-moradores-do-umbara/72945',
@@ -99,7 +103,7 @@
         byId('urb-ba-title').textContent = item.title;
         byId('urb-ba-category').textContent = item.category;
         byId('urb-ba-description').textContent = item.description;
-        byId('urb-ba-location').textContent = item.location;
+        byId('urb-ba-location').textContent = `FOTOS: ${item.location}`;
         byId('urb-ba-source').href = item.source;
         byId('urb-ba-counter').textContent = `${String(active + 1).padStart(2, '0')} / ${String(cases.length).padStart(2, '0')}`;
         item.metrics.forEach(([label, value], i) => {
@@ -146,7 +150,7 @@
         button.appendChild(photo);
         const label = document.createElement('span');
         label.className = 'urb-comparison__thumb-label';
-        label.textContent = `${String(index + 1).padStart(2, '0')} / ${item.location.split(' · ')[0]}`;
+        label.textContent = `${String(index + 1).padStart(2, '0')} / ${item.thumbnail}`;
         button.appendChild(label);
         button.addEventListener('click', () => setCase(index));
         thumbs.appendChild(button);
