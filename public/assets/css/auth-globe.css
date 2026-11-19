@@ -57,11 +57,20 @@ button:focus-visible,input:focus-visible,a:focus-visible {
   background: radial-gradient(ellipse at 65% 50%,#0b2030 0%,#050d12 55%,#020609 100%);
 }
 .space-gradient {
+  --form-shadow: linear-gradient(90deg, #000b 0%, #0009 35%, transparent 73%);
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(90deg,rgba(5,13,18,.12),transparent 65%);
+  background-image: var(--form-shadow),
+    linear-gradient(180deg, #03060bb3, transparent 38%, #03060b33 69%, #03060bd9),
+    url('../images/via-lactea-eso0932a.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.auth-experience[data-mode="register"] .space-gradient {
+  --form-shadow: linear-gradient(270deg, #000b 0%, #0009 35%, transparent 73%);
 }
 .topline,.bottomline {
   z-index: 12;
@@ -316,6 +325,12 @@ h1 em,h2 em {
 .demo-label {
   color: #b6d49c;
 }
+.sky-credit {
+  color: #b5c5cf;
+}
+.sky-credit:hover {
+  text-decoration: underline;
+}
 .landing-reticle {
   position: absolute;
   z-index: 7;
@@ -444,8 +459,15 @@ h1 em,h2 em {
     padding: 0 18px;
     font-size: 8px;
   }
-  .bottomline span:nth-child(2) {
-    display: none;
+  .auth-experience .space-gradient,
+  .auth-experience[data-mode="register"] .space-gradient {
+    --form-shadow: radial-gradient(ellipse at 50% 50%, #000a 0%, #0007 56%, transparent 92%);
+  }
+  .bottomline {
+    gap: 7px;
+  }
+  .sky-credit {
+    white-space: nowrap;
   }
   .planet-zone {
     width: 100%;
@@ -569,12 +591,9 @@ h1 em,h2 em {
     right: 8px;
   }
 }
-/* V7 — preto puro e formulário sem cartão opaco, blur, borda ou sombra. */
+/* Fundo escuro e formulário sem cartão opaco, blur, borda ou sombra. */
 html,body,.auth-experience {
   background: #000 !important;
-}
-.space-gradient {
-  background: transparent !important;
 }
 .glass-card {
   background: transparent !important;

@@ -87,6 +87,7 @@
                 selectionIndicator: false, baseLayer: false,
                 terrainProvider: new C.EllipsoidTerrainProvider(),
                 skyBox: false, sun: false, moon: false,
+                contextOptions: { webgl: { alpha: true } },
                 useBrowserRecommendedResolution: false,
                 msaaSamples: matchMedia('(pointer: coarse)').matches ? 2 : 4,
                 requestRenderMode: false, shouldAnimate: true
@@ -95,7 +96,7 @@
             viewer.scene.globe.show = true;
             viewer.scene.globe.baseColor = C.Color.fromCssColorString('#123049');
             viewer.scene.globe.maximumScreenSpaceError = matchMedia('(pointer: coarse)').matches ? 1.6 : 1.15;
-            viewer.scene.backgroundColor = C.Color.BLACK;
+            viewer.scene.backgroundColor = C.Color.TRANSPARENT;
             viewer.scene.skyAtmosphere.show = true;
             viewer.scene.fog.enabled = false;
             viewer.scene.screenSpaceCameraController.enableInputs = false;
