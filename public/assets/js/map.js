@@ -5,13 +5,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!mapElement || !data)
         return;
     const center = [-16.7286, -43.8578];
-    const categorySymbols = new Map([
-        ["Pavimentação", "║"],
-        ["Iluminação pública", "✦"],
-        ["Acessibilidade", "♿︎"],
-        ["Descarte irregular de resíduos", "▤"],
-        ["Drenagem", "≋"],
-        ["Sinalização", "!"]
+    const otherCategory = { symbol: "•", color: "#cbd4ca" };
+    const categoryMarkers = new Map([
+        ["Pavimentação", { symbol: "║", color: "#f4a96e" }],
+        ["Iluminação pública", { symbol: "✦", color: "#f8df75" }],
+        ["Acessibilidade", { symbol: "♿︎", color: "#9ce0a3" }],
+        ["Descarte irregular de resíduos", { symbol: "▤", color: "#c9b7f4" }],
+        ["Drenagem", { symbol: "≋", color: "#8dcdf3" }],
+        ["Sinalização", { symbol: "!", color: "#f6a6bf" }]
     ]);
     const statusColors = {
         "Novo": "#b8e954",
@@ -201,7 +202,9 @@ document.addEventListener("DOMContentLoaded", () => {
         card.dataset.reportId = report.id;
         const topline = makeElement("div", "report-card-topline");
         const category = makeElement("span", "report-card-category");
-        const symbol = makeElement("span", "report-card-symbol", categorySymbols.get(report.category) || "•");
+        const appearance = categoryMarkers.get(report.category) || otherCategory;
+        const symbol = makeElement("span", "report-card-symbol", appearance.symbol);
+        symbol.style.setProperty("background-color", appearance.color);
         symbol.setAttribute("aria-hidden", "true");
         category.append(symbol, makeElement("span", "", report.category));
         card.append(category);
@@ -231,8 +234,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function makeReportMarker(report) {
         const pin = makeElement("span", report.demo ? "map-v19-pin map-v19-demo-pin" : "map-v19-pin");
         pin.setAttribute("aria-hidden", "true");
-        pin.style.setProperty("--pin-color", statusColors[report.status] || statusColors.Novo);
-        pin.append(makeElement("span", "map-pin-head", categorySymbols.get(report.category) || "•"));
+        const appearance = categoryMarkers.get(report.category) || otherCategory;
+        pin.style.setProperty("--pin-color", appearance.color);
+        pin.style.setProperty("--pin-status", statusColors[report.status] || statusColors.Novo);
+        pin.append(makeElement("span", "map-pin-head", appearance.symbol));
         const icon = L.divIcon({
             className: "map-v19-pin-holder",
             html: pin.outerHTML,
