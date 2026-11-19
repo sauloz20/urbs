@@ -5,15 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!mapElement || !data)
         return;
     const center = [-16.7286, -43.8578];
-    const otherCategory = { symbol: "•", color: "#cbd4ca" };
     const categoryMarkers = new Map([
-        ["Pavimentação", { symbol: "║", color: "#f4a96e" }],
-        ["Iluminação pública", { symbol: "✦", color: "#f8df75" }],
-        ["Acessibilidade", { symbol: "♿︎", color: "#9ce0a3" }],
-        ["Descarte irregular de resíduos", { symbol: "▤", color: "#c9b7f4" }],
-        ["Drenagem", { symbol: "≋", color: "#8dcdf3" }],
-        ["Sinalização", { symbol: "!", color: "#f6a6bf" }]
+        ["Pavimentação", { symbol: "║", color: "#f4a96e", examples: "Buracos, asfalto quebrado e desníveis na via." }],
+        ["Iluminação pública", { symbol: "✦", color: "#f8df75", examples: "Lâmpadas apagadas, intermitentes ou danificadas." }],
+        ["Acessibilidade", { symbol: "♿︎", color: "#9ce0a3", examples: "Calçadas obstruídas, rampas danificadas ou ausentes." }],
+        ["Descarte irregular de resíduos", { symbol: "▤", color: "#c9b7f4", examples: "Lixo, entulho ou móveis descartados em área pública." }],
+        ["Drenagem", { symbol: "≋", color: "#8dcdf3", examples: "Bueiros entupidos e acúmulo de água na rua." }],
+        ["Sinalização", { symbol: "!", color: "#f6a6bf", examples: "Placas danificadas, semáforos com defeito e faixas apagadas." }],
+        ["Outro", { symbol: "•", color: "#cbd4ca", examples: "Problemas de infraestrutura fora das demais categorias." }]
     ]);
+    const otherCategory = categoryMarkers.get("Outro");
     const statusColors = {
         "Novo": "#b8e954",
         "Em análise": "#e5a94a",
@@ -48,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
             explorerToggle.setAttribute("aria-expanded", String(expanded));
         });
     }
+    renderPinGuide();
     if (!window.L) {
         if (mapUnavailable)
             mapUnavailable.hidden = false;
@@ -231,17 +233,36 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return card;
     }
-    function makeReportMarker(report) {
-        const pin = makeElement("span", report.demo ? "map-v19-pin map-v19-demo-pin" : "map-v19-pin");
+    function makePin(appearance, status, demo) {
+        const pin = makeElement("span", demo ? "map-v19-pin map-v19-demo-pin" : "map-v19-pin");
         pin.setAttribute("aria-hidden", "true");
-        const appearance = categoryMarkers.get(report.category) || otherCategory;
         pin.style.setProperty("--pin-color", appearance.color);
-        pin.style.setProperty("--pin-status", statusColors[report.status] || statusColors.Novo);
-        pin.append(
-            makeElement("span", "map-pin-stem"),
-            makeElement("span", "map-pin-head"),
-            makeElement("span", "map-pin-status")
-        );
+        pin.append(makeElement("span", "map-pin-stem"), makeElement("span", "map-pin-head"));
+        if (status) {
+            pin.style.setProperty("--pin-status", statusColors[status] || statusColors.Novo);
+            pin.append(makeElement("span", "map-pin-status"));
+        }
+        return pin;
+    }
+    function renderPinGuide() {
+        const guide = document.getElementById("map-pin-guide-list");
+        if (!guide)
+            return;
+        categoryMarkers.forEach((appearance, category) => {
+            const card = makeElement("li", "map-pin-guide-card");
+            const preview = makeElement("span", "map-pin-preview");
+            const copy = makeElement("div", "map-pin-guide-copy");
+            preview.setAttribute("aria-hidden", "true");
+            preview.append(makePin(appearance));
+            copy.append(makeElement("strong", "", category), makeElement("p", "", appearance.examples));
+            card.append(preview, copy);
+            guide.append(card);
+        });
+        guide.closest("section").hidden = false;
+    }
+    function makeReportMarker(report) {
+        const appearance = categoryMarkers.get(report.category) || otherCategory;
+        const pin = makePin(appearance, report.status, report.demo);
         const icon = L.divIcon({
             className: "map-v19-pin-holder",
             html: pin.outerHTML,

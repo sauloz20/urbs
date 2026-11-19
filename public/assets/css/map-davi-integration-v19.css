@@ -152,6 +152,69 @@
 .leaflet-marker-icon:focus-visible .map-v19-pin {
   filter: drop-shadow(0 0 2px #faffee) drop-shadow(0 0 4px #c6ef66) drop-shadow(0 2px 3px #07160cdd);
 }
+
+.map-pin-guide {
+  margin: 0 var(--map-frame-gutter, 9px) var(--map-frame-gutter, 9px);
+  padding: 12px;
+  border: 1px solid #496759;
+  border-radius: 10px;
+  background: #133226;
+}
+
+.map-pin-guide h2 {
+  margin: 0 0 9px;
+  color: #f3f8ec;
+  font: 650 15px/1.2 var(--display, sans-serif);
+}
+
+.map-pin-guide-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.map-pin-guide-card {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 7px 6px 7px 2px;
+  border: 1px solid #416152;
+  border-radius: 7px;
+  background: #1b3a2d;
+}
+
+.map-pin-preview {
+  display: block;
+  height: 37px;
+  flex: 0 0 31px;
+  pointer-events: none;
+}
+
+.map-pin-preview .map-v19-pin {
+  transform: translate(-7px, -8px) rotate(-18deg) scale(.68);
+}
+
+.map-pin-guide-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.map-pin-guide-copy strong {
+  display: block;
+  color: #f3f8ec;
+  font: 800 11px/1.25 var(--body, sans-serif);
+}
+
+.map-pin-guide-copy p {
+  margin: 3px 0 0;
+  color: #c4d7cb;
+  font: 500 11px/1.35 var(--body, sans-serif);
+}
+
 .map-panel .leaflet-control-zoom {
   border: 1px solid #243d2b !important;
   border-radius: 0 !important;
