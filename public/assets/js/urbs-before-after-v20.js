@@ -4,6 +4,8 @@
 */
 (() => {
     'use strict';
+    // Frações verticais da montagem que excluem as legendas impressas.
+    const curitibaFrames = { before: [.055, .495], after: [.555, .995] };
     const cases = [
         {
             title: 'Rua Clothilde Hachenberg Monastier',
@@ -11,6 +13,7 @@
             location: 'CURITIBA / PR · TATUQUARA',
             description: 'O trecho recebeu pavimentação asfáltica, drenagem, meio-fio e sinalização. A comparação reúne fotografias documentadas pela Prefeitura de Curitiba.',
             photo: 'https://mid-noticias.curitiba.pr.gov.br/2024/00441623.jpg',
+            frames: curitibaFrames,
             source: 'https://www.curitiba.pr.gov.br/noticias/antes-e-depois-veja-como-ficou-rua-de-curitiba-transformada-por-obra-da-prefeitura/73095',
             metrics: [['EXTENSÃO', '90 m'], ['INTERVENÇÃO', 'Asfalto'], ['STATUS', 'Concluída']]
         },
@@ -20,6 +23,7 @@
             location: 'CURITIBA / PR · LAMENHA PEQUENA',
             description: 'A antiga via de saibro passou por uma obra de pavimentação e drenagem, com galerias para água pluvial e sinalização. Registros oficiais de Curitiba.',
             photo: 'https://mid-noticias.curitiba.pr.gov.br/2024/00433866.jpg',
+            frames: curitibaFrames,
             source: 'https://www.curitiba.pr.gov.br/noticias/antes-e-depois-rua-de-curitiba-e-transformada-com-asfalto-e-sistema-de-drenagem/72588',
             metrics: [['ANTES', 'Saibro'], ['DEPOIS', 'Asfalto'], ['STATUS', 'Concluída']]
         },
@@ -29,6 +33,7 @@
             location: 'FORTALEZA / CE',
             description: 'Comparação divulgada pela Prefeitura de Fortaleza no contexto de obras de infraestrutura e drenagem em vias urbanas.',
             photo: 'assets/images/comparacoes/expedito-madruga-monte.jpg',
+            frames: { before: [.04, .44], after: [.60, 1], width: .72 },
             source: 'https://www.fortaleza.ce.gov.br/noticias/obras-de-drenagem-e-saneamento-vao-beneficiar-65-ruas-no-canindezinho',
             metrics: [['TIPO', 'Urbanização'], ['REGIÃO', 'Fortaleza'], ['FONTE', 'Prefeitura']]
         },
@@ -38,6 +43,7 @@
             location: 'CURITIBA / PR · UMBARÁ',
             description: 'Rua contemplada pelo programa Asfalto no Saibro, com pavimentação em 742 metros e implantação de drenagem, incluindo galerias pluviais e meio-fio.',
             photo: 'https://mid-noticias.curitiba.pr.gov.br/2024/capa/00440018.jpg',
+            frames: curitibaFrames,
             source: 'https://www.curitiba.pr.gov.br/noticias/prefeitura-de-curitiba-troca-saibro-pelo-asfalto-e-melhora-a-vida-de-moradores-do-umbara/72945',
             metrics: [['EXTENSÃO', '742 m'], ['INTERVENÇÃO', 'Drenagem'], ['STATUS', 'Concluída']]
         }
@@ -79,6 +85,14 @@
         setSplit(Number(button.dataset.urbBaPreset));
         range.focus({ preventScroll: true });
     }));
+    function setPhoto(element, item, side) {
+        const [start, end] = item.frames[side];
+        const height = end - start;
+        const width = item.frames.width ?? 1;
+        element.style.backgroundImage = `url("${item.photo.replaceAll('"', '%22')}")`;
+        element.style.backgroundSize = `${100 / width}% ${100 / height}%`;
+        element.style.backgroundPosition = `center ${(start / (1 - height) * 100).toFixed(6)}%`;
+    }
     function setCase(index) {
         active = (index + cases.length) % cases.length;
         const item = cases[active];
@@ -92,9 +106,8 @@
             byId(`urb-ba-metric-label-${i + 1}`).textContent = label;
             byId(`urb-ba-metric-${i + 1}`).textContent = value;
         });
-        const background = `url("${item.photo.replaceAll('"', '%22')}")`;
-        before.style.backgroundImage = background;
-        after.style.backgroundImage = background;
+        setPhoto(before, item, 'before');
+        setPhoto(after, item, 'after');
         clearTimeout(animationTimeout);
         viewer.classList.remove('is-transitioning');
         info?.classList.remove('is-transitioning');
@@ -129,7 +142,7 @@
         button.setAttribute('aria-label', `Visualizar ${item.title}`);
         const photo = document.createElement('span');
         photo.className = 'urb-comparison__thumb-photo';
-        photo.style.backgroundImage = `url("${item.photo.replaceAll('"', '%22')}")`;
+        setPhoto(photo, item, 'after');
         button.appendChild(photo);
         const label = document.createElement('span');
         label.className = 'urb-comparison__thumb-label';
