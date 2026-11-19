@@ -100,26 +100,38 @@
                         vec3 eye = normalize(czm_inverseViewRotation3D * inputData.positionToEyeEC);
                         vec3 halfAngle = normalize(sun + eye);
                         float alignment = max(dot(surface, halfAngle), 0.0);
-                        // Alongue o brilho no sentido norte–sul e mantenha as bordas difusas.
+                        float facing = max(dot(surface, eye), 0.0);
+                        float daylight = smoothstep(0.0, .22, dot(surface, sun));
+
                         vec3 east = normalize(vec3(-surface.y, surface.x, .0001));
+                        vec3 north = normalize(cross(surface, east));
                         float eastOffset = dot(east, halfAngle);
                         float crossSpread = eastOffset * eastOffset;
-                        float core = pow(alignment, 92.0) * exp(-27.0 * crossSpread);
-                        float halo = pow(alignment, 15.0) * exp(-7.0 * crossSpread);
+                        float body = pow(alignment, 53.0) * exp(-12.0 * crossSpread);
+                        float halo = pow(alignment, 12.0) * exp(-4.0 * crossSpread);
 
-                        // Ondulações em duas direções, com menos detalhe quando ocupam poucos pixels.
-                        float waveAcross = dot(surface, vec3(122.0, -78.0, 248.0));
-                        float waveAlong = dot(surface, vec3(68.0, 123.0, 171.0));
-                        float detail = 1.0 - smoothstep(.55, 1.65, max(fwidth(waveAcross), fwidth(waveAlong)));
-                        float ripples = sin(waveAcross + .8 * sin(waveAlong)) * cos(waveAlong);
-                        float glints = .84 + .24 * ripples * detail;
-                        float lit = smoothstep(0.0, .23, dot(surface, sun));
-                        float facing = max(dot(surface, eye), 0.0);
+                        // As ondas alteram a orientação da água. Suavize o detalhe subpixel.
+                        vec3 waves = vec3(
+                            dot(surface, vec3(122.0, -78.0, 248.0)),
+                            dot(surface, vec3(68.0, 123.0, 171.0)),
+                            dot(surface, vec3(181.0, 61.0, -94.0))
+                        );
+                        vec3 footprint = fwidth(waves);
+                        float detail = 1.0 - smoothstep(.5, 1.55, max(footprint.x, max(footprint.y, footprint.z)));
+                        float eastWave = .023 * sin(waves.x + .8 * sin(waves.y)) + .012 * cos(waves.z);
+                        float northWave = .018 * sin(waves.y + .7 * cos(waves.z)) + .010 * cos(waves.x);
+                        vec3 waveNormal = normalize(surface + detail * (eastWave * east + northWave * north));
+                        float sparkle = pow(max(dot(waveNormal, halfAngle), 0.0), 158.0);
+
+                        // Fresnel da água e compressão gradual dos brilhos mais intensos.
+                        float fresnel = .02 + .98 * pow(1.0 - clamp(dot(eye, halfAngle), 0.0, 1.0), 5.0);
+                        float fresnelGain = min(1.3, .9 + 2.4 * fresnel);
+                        float sheen = .12 * pow(facing, .85);
+                        float energy = sheen + daylight * fresnelGain * (1.20 * sparkle + .62 * body + .28 * halo);
                         float visible = smoothstep(0.0, .18, facing);
-                        float sheen = .19 * pow(facing, .82);
-                        float shimmer = sheen + (.80 * core * glints + .45 * halo) * lit;
-                        material.diffuse = mix(vec3(.82, .89, .98), vec3(1.0, .96, .83), max(core, halo * .82));
-                        material.alpha = water * min(.92, reflectionStrength * shimmer) * visible;
+                        float tint = smoothstep(.03, .65, body + .3 * halo);
+                        material.diffuse = mix(vec3(.48, .66, .85), vec3(1.0, .97, .88), tint);
+                        material.alpha = water * .94 * (1.0 - exp(-reflectionStrength * energy)) * visible;
                         return material;
                     }
                 `
@@ -131,7 +143,7 @@
         let frames = 0;
         const removeListener = currentViewer.scene.postRender.addEventListener(() => {
             if (++frames === 2) {
-                material.uniforms.reflectionStrength = .88;
+                material.uniforms.reflectionStrength = 1.0;
                 removeListener();
             }
         });
