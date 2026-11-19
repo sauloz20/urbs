@@ -165,7 +165,9 @@
     // GSAP is optional; never set opacity:0 or position:fixed on sections.
     if (window.gsap && !reduced) {
         try {
-            gsap.fromTo('.hero-content', { y: 20 }, { y: 0, duration: 1.25, ease: 'power3.out' });
+            if (!document.documentElement.classList.contains('urbs-arrival')) {
+                gsap.fromTo('.hero-content', { y: 20 }, { y: 0, duration: 1.25, ease: 'power3.out' });
+            }
             gsap.to('.hero-photo', { scale: 1.17, scrollTrigger: undefined, duration: 18, repeat: -1, yoyo: true, ease: 'sine.inOut' });
         }
         catch (e) {

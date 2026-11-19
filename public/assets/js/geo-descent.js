@@ -25,7 +25,7 @@
     { at: .14, name: 'América do Sul' },
     { at: .37, name: 'Brasil' },
     { at: .64, name: 'Minas Gerais' },
-    { at: .86, name: destination.label.split(',')[0], caption: 'ÁREA PILOTO · MINAS GERAIS' }
+    { at: .88, name: destination.label.split(',')[0], caption: 'ÁREA PILOTO · MINAS GERAIS' }
   ];
   const wait = ms => new Promise(resolve => window.setTimeout(resolve, ms));
 
@@ -34,7 +34,7 @@
   let ended = false;
   let journey;
   let caption;
-  let tileFrame = 0;
+  let stopWaitingForTiles;
   let hasSatellite = false;
   let hasPhotorealisticTiles = false;
 
@@ -158,20 +158,35 @@
 
   function waitForInitialTiles() {
     return new Promise(resolve => {
-      const deadline = performance.now() + 750;
-      function check() {
-        if (ended || viewer.scene.globe.tilesLoaded || hasPhotorealisticTiles || performance.now() >= deadline) {
-          resolve();
-          return;
-        }
-        tileFrame = requestAnimationFrame(check);
+      let renderedFrames = 0;
+      function done() {
+        window.clearTimeout(timeout);
+        removeListener();
+        stopWaitingForTiles = undefined;
+        resolve();
       }
-      check();
+      const removeListener = viewer.scene.postRender.addEventListener(() => {
+        renderedFrames++;
+        if (renderedFrames >= 2 && (viewer.scene.globe.tilesLoaded || hasPhotorealisticTiles)) {
+          done();
+        }
+      });
+      const timeout = window.setTimeout(done, 850);
+      stopWaitingForTiles = done;
     });
   }
 
   function runJourney() {
     const duration = Math.max(4, Number(config.flightDurationSeconds) || 6);
+    const customEase = window.CustomEase;
+    let cameraEase = 'sine.inOut';
+    if (customEase) {
+      gsap.registerPlugin(customEase);
+      cameraEase = customEase.create(
+        'urbs-orbital',
+        'M0,0 C.09,0 .18,.09 .28,.27 C.37,.432 .42,.555 .51,.62 C.61,.692 .67,.728 .76,.795 C.87,.877 .90,1 1,1'
+      );
+    }
     const camera = { position: 0 };
     let nextChapter = 0;
     journey = gsap.timeline({ onComplete: finish });
@@ -180,7 +195,7 @@
       .to(camera, {
         position: 1,
         duration,
-        ease: 'sine.inOut',
+        ease: cameraEase,
         onUpdate() {
           positionCamera(camera.position);
           let chapter;
@@ -194,8 +209,8 @@
       .call(() => {
         status.textContent = 'Chegada a ' + destination.label + '.';
       })
-      .addLabel('arrival', '+=.22')
-      .to(root, { '--geo-dissolve': 1, duration: .48, ease: 'sine.inOut' }, 'arrival');
+      .addLabel('arrival', '+=.28')
+      .to(root, { '--geo-dissolve': 1, duration: .42, ease: 'sine.in' }, 'arrival');
   }
 
   async function start() {
@@ -214,19 +229,22 @@
 
     try {
       if (!C || !gsap) throw new Error('Bibliotecas da abertura indisponíveis.');
+      const touchDevice = window.matchMedia('(pointer: coarse)').matches;
       viewer = new C.Viewer(sceneHost, {
         animation: false, timeline: false, fullscreenButton: false, homeButton: false,
         navigationHelpButton: false, sceneModePicker: false, baseLayerPicker: false,
         geocoder: false, infoBox: false, selectionIndicator: false, baseLayer: false,
         terrainProvider: new C.EllipsoidTerrainProvider(),
         useBrowserRecommendedResolution: false,
-        msaaSamples: 4
+        msaaSamples: touchDevice ? 2 : 4
       });
       const framePixels = window.innerWidth * window.innerHeight;
       const ratio = window.devicePixelRatio || 1;
-      viewer.resolutionScale = Math.min(1, 1.75 / ratio, Math.sqrt(4500000 / framePixels) / ratio);
+      const pixelBudget = touchDevice ? 2800000 : 4500000;
+      const maxRatio = touchDevice ? 1.5 : 1.8;
+      viewer.resolutionScale = Math.min(1, maxRatio / ratio, Math.sqrt(pixelBudget / framePixels) / ratio);
       viewer.scene.globe.enableLighting = false;
-      viewer.scene.globe.maximumScreenSpaceError = 1.5;
+      viewer.scene.globe.maximumScreenSpaceError = touchDevice ? 1.8 : 1.45;
       viewer.scene.screenSpaceCameraController.enableInputs = false;
       positionCamera(0);
       await prepareImagery();
@@ -246,7 +264,7 @@
   window.addEventListener('pagehide', () => {
     if (!running) return;
     ended = true;
-    cancelAnimationFrame(tileFrame);
+    stopWaitingForTiles?.();
     journey?.kill();
     caption?.kill();
     viewer?.destroy();

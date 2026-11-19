@@ -844,15 +844,21 @@ a:focus-visible,button:focus-visible,.story-viewport:focus-visible {
   display: flex;
   gap: 25px;
 }
-/* Arrival from Cesium transition. Never hide full document while media loads. */
-.urbs-arrival .hero:after {
+/* A mesma cor encerra a cena orbital antes da navegação. */
+.urbs-arrival::after {
   content: "";
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 90;
-  background: #06150d;
-  animation: revealHomepage 1s .12s both;
+  z-index: 200;
+  background: #020805;
+  animation: revealHomepage .72s .18s ease-out both;
   pointer-events: none;
+}
+.urbs-arrival:focus-within::after {
+  display: none;
+}
+.urbs-arrival .hero-content {
+  animation: settleHero .85s .18s cubic-bezier(.2,.65,.3,1) both;
 }
 @keyframes revealHomepage {
   0% {
@@ -860,6 +866,14 @@ a:focus-visible,button:focus-visible,.story-viewport:focus-visible {
   }
   100% {
     opacity: 0;
+  }
+}
+@keyframes settleHero {
+  from {
+    transform: translateY(14px);
+  }
+  to {
+    transform: none;
   }
 }
 @media(max-width:1150px) {
@@ -1062,8 +1076,11 @@ a:focus-visible,button:focus-visible,.story-viewport:focus-visible {
   .hero-photo {
     transform: none;
   }
-  .urbs-arrival .hero:after {
+  .urbs-arrival::after {
     display: none;
+  }
+  .urbs-arrival .hero-content {
+    animation: none;
   }
   *,*:before,*:after {
     transition-duration: .01ms !important;
