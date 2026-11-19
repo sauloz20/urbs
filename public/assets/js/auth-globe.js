@@ -23,9 +23,20 @@
     const globe = { rotation: { y: 0 } }; // Proxy animável pelo GSAP; vira longitude da câmera Cesium.
     const initialCenter = { lon: 23, lat: 15 }; // África e Oriente Médio.
     function fallback(message) {
-        host.classList.add('globe-fallback');
+        host?.classList.add('globe-fallback');
         if (status)
             status.textContent = message || 'Globo de satélite indisponível; formulários disponíveis.';
+    }
+    function resizeGlobe() {
+        if (!viewer)
+            return;
+        const touch = matchMedia('(pointer: coarse)').matches;
+        const pixels = Math.max(1, host.clientWidth * host.clientHeight);
+        const ratio = window.devicePixelRatio || 1;
+        const pixelBudget = touch ? 1800000 : 3800000;
+        const targetRatio = touch ? Math.min(ratio, 1.7) : Math.min(ratio * 1.3, 2);
+        viewer.resolutionScale = Math.min(targetRatio, Math.sqrt(pixelBudget / pixels)) / ratio;
+        globeCamera();
     }
     function globeCamera() {
         if (!viewer || viewer.isDestroyed() || entering)
@@ -41,7 +52,27 @@
             orientation: { heading: 0, pitch: -C.Math.PI_OVER_TWO, roll: 0 }
         });
     }
-    async function initGlobe() {
+    async function loadGlobeImagery(currentViewer) {
+        const addLayer = (provider, index) => {
+            if (!currentViewer.isDestroyed())
+                currentViewer.imageryLayers.addImageryProvider(provider, index);
+        };
+        // O mosaico local aparece enquanto o satélite carrega e cobre falhas de rede.
+        const results = await Promise.allSettled([
+            C.SingleTileImageryProvider.fromUrl('assets/textures/earth-day.jpg', {
+                credit: 'NASA / Earth Observatory · Blue Marble'
+            }).then(provider => addLayer(provider, 0)),
+            C.ArcGisMapServerImageryProvider.fromUrl(WORLD_IMAGERY, {
+                enablePickFeatures: false
+            }).then(provider => addLayer(provider))
+        ]);
+        if (results.every(result => result.status === 'rejected') && viewer === currentViewer) {
+            currentViewer.destroy();
+            viewer = null;
+            fallback();
+        }
+    }
+    function initGlobe() {
         if (!C || !host) {
             fallback();
             return;
@@ -56,47 +87,31 @@
                 selectionIndicator: false, baseLayer: false,
                 terrainProvider: new C.EllipsoidTerrainProvider(),
                 skyBox: false, sun: false, moon: false,
+                useBrowserRecommendedResolution: false,
+                msaaSamples: matchMedia('(pointer: coarse)').matches ? 2 : 4,
                 requestRenderMode: false, shouldAnimate: true
             });
             viewer.scene.globe.enableLighting = false;
             viewer.scene.globe.show = true;
             viewer.scene.globe.baseColor = C.Color.fromCssColorString('#123049');
+            viewer.scene.globe.maximumScreenSpaceError = matchMedia('(pointer: coarse)').matches ? 1.6 : 1.15;
             viewer.scene.backgroundColor = C.Color.BLACK;
             viewer.scene.skyAtmosphere.show = true;
             viewer.scene.fog.enabled = false;
             viewer.scene.screenSpaceCameraController.enableInputs = false;
             viewer.scene.globe.showGroundAtmosphere = true;
-            // Adapta resolução ao dispositivo para não sobrecarregar placas simples.
-            viewer.resolutionScale = Math.min(1.5, window.devicePixelRatio > 1.5 ? 1 : window.devicePixelRatio || 1);
-            host.classList.add('globe-ready');
-            globeCamera();
-            try {
-                // O serviço devolve os créditos mostrados pelo Cesium no rodapé.
-                const provider = await C.ArcGisMapServerImageryProvider.fromUrl(WORLD_IMAGERY, {
-                    enablePickFeatures: false
-                });
-                if (viewer && !viewer.isDestroyed()) {
-                    viewer.imageryLayers.addImageryProvider(provider);
-                    host.classList.add('satellite-loaded');
-                }
-            }
-            catch (err) {
-                console.warn('URBS: Esri World Imagery indisponível; carregando ruas.', err);
-                try {
-                    viewer.imageryLayers.addImageryProvider(new C.OpenStreetMapImageryProvider({ url: 'https://tile.openstreetmap.org/' }));
-                    host.classList.add('osm-loaded');
-                }
-                catch (other) {
-                    console.warn('URBS: camada geográfica indisponível.', other);
-                }
-            }
+            resizeGlobe();
+            window.addEventListener('resize', resizeGlobe);
+            void loadGlobeImagery(viewer);
             lastTime = performance.now();
             function animate(now) {
+                if (!viewer || entering) {
+                    raf = 0;
+                    return;
+                }
                 raf = requestAnimationFrame(animate);
                 const dt = Math.min(.06, (now - lastTime) / 1000 || 0);
                 lastTime = now;
-                if (entering)
-                    return;
                 if (!switching && !dragging && !reduced && now - lastDrag > 2200)
                     globe.rotation.y += .014 * dt; // Reinicia ao soltar / ficar inativo.
                 panX += (pointerX - panX) * Math.min(1, dt * 1.6);
@@ -109,17 +124,20 @@
                     cancelAnimationFrame(raf);
                     raf = 0;
                 }
-                else if (!raf) {
+                else if (!raf && viewer && !entering) {
                     lastTime = performance.now();
                     raf = requestAnimationFrame(animate);
                 }
             });
-            window.addEventListener('pagehide', () => {
+            window.addEventListener('pagehide', event => {
+                if (event.persisted)
+                    return;
                 cancelAnimationFrame(raf);
+                window.removeEventListener('resize', resizeGlobe);
                 if (viewer && !viewer.isDestroyed())
                     viewer.destroy();
                 viewer = null;
-            }, { once: true });
+            });
         }
         catch (err) {
             console.warn('URBS: CesiumJS indisponível.', err);
