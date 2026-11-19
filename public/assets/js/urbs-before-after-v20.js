@@ -28,7 +28,7 @@
             category: 'URBANIZAÇÃO',
             location: 'FORTALEZA / CE',
             description: 'Comparação divulgada pela Prefeitura de Fortaleza no contexto de obras de infraestrutura e drenagem em vias urbanas.',
-            photo: 'https://www.fortaleza.ce.gov.br/images/images1/0000Janeiro2022/06%2001%202022%20rua%20Expedito%20Madruga%20Monte%20ante%20depois.jpeg',
+            photo: 'assets/images/comparacoes/expedito-madruga-monte.jpg',
             source: 'https://www.fortaleza.ce.gov.br/noticias/obras-de-drenagem-e-saneamento-vao-beneficiar-65-ruas-no-canindezinho',
             metrics: [['TIPO', 'Urbanização'], ['REGIÃO', 'Fortaleza'], ['FONTE', 'Prefeitura']]
         },

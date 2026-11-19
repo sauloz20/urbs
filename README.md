@@ -26,7 +26,7 @@ A aplicação estática está em `public/`. Para testar, copie `public/` para o 
 
 ## Transformações urbanas
 
-O comparador 16:9 utiliza registros publicados por órgãos públicos de outros municípios. Não represente tais casos como obras da URBS ou de Montes Claros. As fotos são hospedadas externamente, e seu carregamento depende das fontes originais.
+O comparador 16:9 utiliza registros publicados por órgãos públicos de outros municípios. Não represente tais casos como obras da URBS ou de Montes Claros. A montagem da Rua Expedito Madruga Monte, publicada pela Prefeitura de Fortaleza, está incluída no projeto. Os demais casos carregam as imagens das fontes originais.
 
 As imagens da seção **Do Olhar à Ação** são ilustrativas, geradas digitalmente, armazenadas em WebP no próprio projeto.
 
