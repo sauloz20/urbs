@@ -213,17 +213,27 @@ document.addEventListener("DOMContentLoaded", () => {
             map.setView(center, 13);
         }
     }
-    function focusReport(id) {
+    function focusReport(id, animate = true) {
         const marker = markersById.get(id);
         if (!marker)
-            return;
+            return false;
         const position = marker.getLatLng();
-        map.flyTo(position, 16, { duration: 1.15 });
-        window.setTimeout(() => marker.openPopup(), 400);
+        if (animate) {
+            map.flyTo(position, 16, { duration: 1.15 });
+            window.setTimeout(() => {
+                if (markersById.get(id) === marker)
+                    marker.openPopup();
+            }, 400);
+        }
+        else {
+            map.setView(position, 16, { animate: false });
+            marker.openPopup();
+        }
         list.querySelectorAll(".report-card").forEach((card) => {
             const selected = card.dataset.reportId === id;
             card.classList.toggle("is-selected", selected);
         });
+        return true;
     }
     [categoryFilter, statusFilter].forEach((field) => field?.addEventListener("change", render));
     locationFilter?.addEventListener("input", render);
@@ -269,5 +279,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
     });
     render();
-    window.setTimeout(() => map.invalidateSize(), 120);
+    const newReportId = new URLSearchParams(window.location.search).get("novo");
+    window.setTimeout(() => {
+        map.invalidateSize();
+        if (newReportId && focusReport(newReportId, false)) {
+            if (liveRegion)
+                liveRegion.textContent = "Registro salvo neste navegador. Ocorrência selecionada no mapa.";
+            mapElement.scrollIntoView({ block: "nearest", behavior: "instant" });
+        }
+    }, 120);
 });

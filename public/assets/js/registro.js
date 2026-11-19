@@ -27,6 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }).addTo(map);
     L.control.zoom({ position: "bottomright" }).addTo(map);
     let marker = null;
+    let saved = false;
+    const submitButton = form.querySelector('button[type="submit"]');
+    window.addEventListener("pageshow", (event) => {
+        if (event.persisted && saved) {
+            saved = false;
+            submitButton.disabled = false;
+            feedback.textContent = "";
+            feedback.className = "form-feedback";
+        }
+    });
     function setPoint(latlng) {
         if (marker)
             marker.setLatLng(latlng);
@@ -75,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     form.addEventListener("submit", (event) => {
         event.preventDefault();
-        if (!form.reportValidity())
+        if (saved || !form.reportValidity())
             return;
         if (!latitudeInput.value || !longitudeInput.value) {
             feedback.textContent = "Selecione um ponto no mapa antes de salvar.";
@@ -100,8 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
             feedback.className = "form-feedback is-error";
             return;
         }
+        saved = true;
+        submitButton.disabled = true;
         feedback.textContent = "Registro salvo somente neste navegador. Abrindo o mapa…";
         feedback.className = "form-feedback is-success";
-        window.setTimeout(() => { window.location.href = "mapa.html?novo=1"; }, 700);
+        const params = new URLSearchParams({ novo: result.report.id });
+        window.setTimeout(() => { window.location.href = `mapa.html?${params}`; }, 700);
     });
 });
