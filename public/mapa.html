@@ -16,6 +16,7 @@
   <link href="assets/css/style.css" rel="stylesheet"/>
   <link href="assets/css/map-arrival.css" rel="stylesheet"/>
   <link href="assets/css/map-davi-integration-v19.css?v=1901" rel="stylesheet"/>
+  <link href="assets/css/occurrences.css?v=1" rel="stylesheet"/>
   <script>
    // Rodar antes da pintura da página para manter continuidade visual entre telas.
     try {
@@ -32,7 +33,7 @@
   </script>
   <script defer="" src="assets/js/store.js">
   </script>
-  <script defer="" src="assets/js/map.js?v=1902">
+  <script defer="" src="assets/js/map.js?v=1903">
   </script>
  </head>
  <body class="app-page map-page">
@@ -70,7 +71,7 @@
     </a>
    </nav>
    <a class="header-action" href="registro.html">
-    Nova ocorrência
+    Registrar ocorrência
     <span aria-hidden="true">
      ＋
     </span>
@@ -80,150 +81,9 @@
    <p aria-live="polite" class="visually-hidden" id="map-live-region" role="status">
    </p>
    <div class="map-page-heading">
-    <div>
-     <p class="section-kicker">
-      <span>
-       URBS
-      </span>
-      / TERRITÓRIO
-     </p>
-     <h1>
-      O mapa da
-      <em>
-       cidade.
-      </em>
-     </h1>
-    </div>
-    <a class="back-link" href="index.html">
-     ← Voltar ao início
-    </a>
-   </div>
-   <div class="demo-banner" role="note">
-    <span aria-hidden="true" class="demo-banner-mark">
-     i
-    </span>
-    <p>
-     <strong>
-      Protótipo local.
-     </strong>
-     Os pontos de exemplo são fictícios; seus registros ficam somente neste navegador e não são enviados a um servidor.
-    </p>
+    <h1>Mapa de ocorrências</h1>
    </div>
    <div class="map-workspace">
-    <aside aria-labelledby="explorer-title" class="explorer-panel">
-     <div class="explorer-topline">
-      <div>
-       <span class="mono-label">
-        EXPLORAÇÃO
-       </span>
-       <h2 id="explorer-title">
-        Ocorrências
-       </h2>
-      </div>
-      <span aria-live="polite" class="result-count" id="result-count">
-       —
-      </span>
-     </div>
-     <p class="explorer-description">
-      Filtre os registros por categoria, situação ou referência do local.
-     </p>
-     <div class="filter-fields">
-      <label for="location-filter">
-       LOCALIZAÇÃO
-       <span class="visually-hidden">
-        Buscar por rua, bairro ou descrição do local
-       </span>
-      </label>
-      <div class="search-field">
-       <span aria-hidden="true">
-        ⌕
-       </span>
-       <input autocomplete="off" id="location-filter" placeholder="Rua, bairro ou referência" type="search"/>
-      </div>
-      <label for="category-filter">
-       CATEGORIA
-      </label>
-      <select id="category-filter">
-       <option value="all">
-        Todas as categorias
-       </option>
-       <option value="Pavimentação">
-        Buracos e pavimentação
-       </option>
-       <option value="Iluminação pública">
-        Iluminação pública
-       </option>
-       <option value="Acessibilidade">
-        Calçadas e acessibilidade
-       </option>
-       <option value="Descarte irregular de resíduos">
-        Descarte irregular de resíduos
-       </option>
-       <option value="Drenagem">
-        Drenagem
-       </option>
-       <option value="Sinalização">
-        Sinalização
-       </option>
-       <option value="Outro">
-        Outro
-       </option>
-      </select>
-      <label for="status-filter">
-       SITUAÇÃO
-      </label>
-      <select id="status-filter">
-       <option value="all">
-        Todas as situações
-       </option>
-       <option value="Novo">
-        Novo
-       </option>
-       <option value="Em análise">
-        Em análise
-       </option>
-       <option value="Em andamento">
-        Em andamento
-       </option>
-       <option value="Solucionado">
-        Solucionado
-       </option>
-      </select>
-      <button class="clear-filters" id="clear-filters" type="button">
-       Limpar filtros
-       <span aria-hidden="true">
-        ↺
-       </span>
-      </button>
-     </div>
-     <div class="report-list-heading">
-      <span>
-       REGISTROS VISÍVEIS
-      </span>
-      <span id="list-count">
-       —
-      </span>
-     </div>
-     <div aria-label="Lista de ocorrências" aria-live="polite" class="report-list" id="report-list">
-     </div>
-     <div class="empty-state" hidden="" id="empty-state">
-      <span aria-hidden="true" class="empty-symbol">
-       ＋
-      </span>
-      <h3>
-       Nenhuma ocorrência encontrada
-      </h3>
-      <p>
-       Tente ajustar os filtros ou registre uma nova observação para este navegador.
-      </p>
-      <a class="button button-lime button-compact" href="registro.html">
-       Fazer um registro
-       <span aria-hidden="true">
-        ↗
-       </span>
-      </a>
-     </div>
-    </aside>
     <section aria-label="Mapa e localização das ocorrências" class="map-panel">
      <div class="map-topbar map-v19-bar">
       <div class="map-v19-place">
@@ -233,7 +93,7 @@
         Montes Claros
        </strong>
        <span>
-        Minas Gerais · Brasil
+        MG
        </span>
       </div>
       <div aria-label="Controles do mapa" class="map-v19-tools">
@@ -270,50 +130,98 @@
         Confira a conexão com a internet e recarregue a página.
        </span>
       </div>
-      <div class="map-canvas-footer">
-       <span>
-        URBS / CAMADAS TERRITORIAIS · PINOS POR SITUAÇÃO
-       </span>
-       <span>
-        Dados cartográficos © OpenStreetMap
-       </span>
-      </div>
      </div>
-     <div aria-label="Legenda de categorias" class="map-legend">
-      <span>
-       <i class="legend-dot dot-pavement">
-       </i>
-       Pavimentação
-      </span>
-      <span>
-       <i class="legend-dot dot-lighting">
-       </i>
-       Iluminação
-      </span>
-      <span>
-       <i class="legend-dot dot-access">
-       </i>
-       Acessibilidade
-      </span>
-      <span>
-       <i class="legend-dot dot-waste">
-       </i>
-       Resíduos
-      </span>
-      <span>
-       <i class="legend-dot dot-other">
-       </i>
-       Outras
-      </span>
+     <div aria-label="Legenda dos marcadores por situação" class="map-legend">
+      <span><i aria-hidden="true" class="legend-dot legend-new"></i> Novo</span>
+      <span><i aria-hidden="true" class="legend-dot legend-analysis"></i> Em análise</span>
+      <span><i aria-hidden="true" class="legend-dot legend-progress"></i> Em andamento</span>
+      <span><i aria-hidden="true" class="legend-dot legend-solved"></i> Solucionado</span>
      </div>
     </section>
+    <aside aria-labelledby="explorer-title" class="explorer-panel" id="occurrence-explorer">
+     <div class="map-sheet-bar">
+      <button aria-controls="explorer-content" aria-expanded="false" class="map-sheet-toggle" id="explorer-toggle" type="button">
+       Ocorrências <span aria-hidden="true" class="map-sheet-arrow"></span>
+      </button>
+      <a class="occurrence-primary" href="registro.html">Registrar <span aria-hidden="true">＋</span></a>
+     </div>
+     <div class="explorer-content" id="explorer-content">
+      <div class="explorer-topline">
+       <h2 id="explorer-title">Ocorrências</h2>
+       <span aria-live="polite" class="result-count" id="result-count">—</span>
+      </div>
+      <div class="filter-fields">
+       <div class="filter-location">
+        <label for="location-filter">Buscar ocorrências</label>
+        <div class="search-field">
+         <span aria-hidden="true">⌕</span>
+         <input autocomplete="off" id="location-filter" placeholder="Rua, bairro ou referência" type="search"/>
+        </div>
+       </div>
+       <div>
+        <label for="category-filter">Categoria</label>
+        <select id="category-filter">
+         <option value="all">
+          Todas as categorias
+         </option>
+         <option value="Pavimentação">
+          Buracos e pavimentação
+         </option>
+         <option value="Iluminação pública">
+          Iluminação pública
+         </option>
+         <option value="Acessibilidade">
+          Calçadas e acessibilidade
+         </option>
+         <option value="Descarte irregular de resíduos">
+          Descarte irregular de resíduos
+         </option>
+         <option value="Drenagem">
+          Drenagem
+         </option>
+         <option value="Sinalização">
+          Sinalização
+         </option>
+         <option value="Outro">
+          Outro
+         </option>
+        </select>
+       </div>
+       <div>
+        <label for="status-filter">Situação</label>
+        <select id="status-filter">
+         <option value="all">
+          Todas as situações
+         </option>
+         <option value="Novo">
+          Novo
+         </option>
+         <option value="Em análise">
+          Em análise
+         </option>
+         <option value="Em andamento">
+          Em andamento
+         </option>
+         <option value="Solucionado">
+          Solucionado
+         </option>
+        </select>
+       </div>
+       <button class="clear-filters" id="clear-filters" type="button">Limpar filtros</button>
+      </div>
+      <div class="report-list-heading">
+       <span>Resultados</span>
+       <span id="list-count">—</span>
+      </div>
+      <div aria-label="Lista de ocorrências" class="report-list" id="report-list"></div>
+      <div class="empty-state" hidden="" id="empty-state">
+       <h3>Nenhuma ocorrência encontrada</h3>
+       <p>Ajuste os filtros ou faça um novo registro.</p>
+      </div>
+     </div>
+    </aside>
    </div>
-   <p class="local-notice">
-    <strong>
-     Sobre os dados:
-    </strong>
-    pontos identificados como “Exemplo” são fictícios. Registros criados por você são salvos localmente neste dispositivo. Não há sincronização ou acompanhamento municipal nesta demonstração.
-   </p>
+   <p class="local-notice"><strong>Protótipo local.</strong> Os pontos de exemplo são fictícios. Seus registros ficam neste navegador e não são enviados à Prefeitura.</p>
   </main>
   <footer class="app-footer">
    <span>
@@ -325,3 +233,4 @@
   </footer>
  </body>
 </html>
+

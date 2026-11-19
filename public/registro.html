@@ -14,11 +14,12 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
   <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
   <link href="assets/css/style.css" rel="stylesheet"/>
+  <link href="assets/css/occurrences.css?v=1" rel="stylesheet"/>
   <script defer="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
   </script>
   <script defer="" src="assets/js/store.js">
   </script>
-  <script defer="" src="assets/js/registro.js?v=1902">
+  <script defer="" src="assets/js/registro.js?v=1903">
   </script>
  </head>
  <body class="app-page form-page-body">
@@ -55,180 +56,79 @@
   </header>
   <main class="form-page" id="registro-conteudo">
    <div class="form-heading">
-    <p class="section-kicker">
-     <span>
-      URBS
-     </span>
-     / PARTICIPAÇÃO
-    </p>
-    <h1>
-     O que você
-     <br/>
-     <em>
-      observou?
-     </em>
-    </h1>
-    <p>
-     Compartilhe uma observação sobre a infraestrutura urbana. O registro será salvo somente neste navegador, para demonstração do fluxo.
-    </p>
-    <div class="form-context">
-     <span aria-hidden="true" class="status-dot">
-     </span>
-     <span>
-      Área piloto
-      <br/>
-      <strong>
-       Montes Claros — MG
-      </strong>
-     </span>
-    </div>
-    <a class="text-link" href="mapa.html">
-     Ver ocorrências no mapa
-     <span aria-hidden="true">
-      ↗
-     </span>
-    </a>
+    <h1>Registrar ocorrência</h1>
+    <span class="form-context"><span aria-hidden="true" class="status-dot"></span> Montes Claros, MG</span>
    </div>
-   <div class="form-column">
-    <form class="report-form" id="report-form">
-     <div class="form-section-title">
-      <div>
-       <h2>
-        Sobre a ocorrência
-       </h2>
-       <p>
-        Conte o que você percebeu.
-       </p>
+   <form class="report-form" id="report-form">
+    <div class="registration-grid">
+     <section aria-labelledby="report-details-title" class="registration-panel">
+      <div class="form-section-title">
+       <h2 id="report-details-title">O que aconteceu?</h2>
       </div>
-     </div>
-     <label for="title">
-      Título da ocorrência
-      <small>
-       OBRIGATÓRIO
-      </small>
-     </label>
-     <input autocomplete="off" id="title" maxlength="90" name="title" placeholder="Ex.: Buraco na rua próximo à praça" required=""/>
-     <div class="form-two">
-      <div>
-       <label for="category">
-        Categoria
-        <small>
-         OBRIGATÓRIO
-        </small>
-       </label>
-       <select id="category" name="category" required="">
-        <option value="">
-         Selecione uma categoria
-        </option>
-        <option value="Pavimentação">
-         Buracos e pavimentação
-        </option>
-        <option value="Iluminação pública">
-         Iluminação pública
-        </option>
-        <option value="Acessibilidade">
-         Calçadas e acessibilidade
-        </option>
-        <option value="Descarte irregular de resíduos">
-         Descarte irregular de resíduos
-        </option>
-        <option value="Drenagem">
-         Drenagem
-        </option>
-        <option value="Sinalização">
-         Sinalização
-        </option>
-        <option value="Outro">
-         Outro
-        </option>
-       </select>
+      <label for="category">Categoria</label>
+      <select id="category" name="category" required="">
+       <option value="">
+        Selecione uma categoria
+       </option>
+       <option value="Pavimentação">
+        Buracos e pavimentação
+       </option>
+       <option value="Iluminação pública">
+        Iluminação pública
+       </option>
+       <option value="Acessibilidade">
+        Calçadas e acessibilidade
+       </option>
+       <option value="Descarte irregular de resíduos">
+        Descarte irregular de resíduos
+       </option>
+       <option value="Drenagem">
+        Drenagem
+       </option>
+       <option value="Sinalização">
+        Sinalização
+       </option>
+       <option value="Outro">
+        Outro
+       </option>
+      </select>
+      <label for="title">Título da ocorrência</label>
+      <input id="title" maxlength="90" name="title" placeholder="Ex.: Buraco perto da praça" required=""/>
+      <label for="description">Descrição</label>
+      <textarea aria-describedby="character-count" id="description" maxlength="700" name="description" placeholder="Descreva o que você observou e como isso afeta o local." required="" rows="5"></textarea>
+      <div class="character-count" id="character-count"><span id="description-count">0</span> / 700 caracteres</div>
+     </section>
+     <section aria-labelledby="report-location-title" class="registration-panel location-panel">
+      <div class="form-section-title">
+       <h2 id="report-location-title">Onde aconteceu?</h2>
       </div>
-      <div>
-       <label for="address">
-        Referência do local
-       </label>
-       <input autocomplete="street-address" id="address" maxlength="140" name="address" placeholder="Rua, bairro ou ponto de referência"/>
+      <label for="address">Rua, bairro ou referência <small>Opcional</small></label>
+      <input autocomplete="street-address" id="address" maxlength="140" name="address" placeholder="Ex.: Praça da Matriz, Centro"/>
+      <div class="picker-map-wrap">
+       <div class="picker-map-toolbar">
+        <span>Marque o ponto no mapa</span>
+        <button class="locate-button" id="use-location" type="button">
+         <span aria-hidden="true">◎</span> Usar minha localização
+        </button>
+       </div>
+       <div aria-describedby="coordinates" aria-label="Selecione a localização da ocorrência no mapa" id="picker-map" role="application"></div>
+       <div aria-live="polite" class="picker-coordinates" id="coordinates">Toque ou clique no mapa. Você pode arrastar o pino para ajustar.</div>
       </div>
-     </div>
-     <label for="description">
-      Descrição
-      <small>
-       OBRIGATÓRIO
-      </small>
-     </label>
-     <textarea id="description" maxlength="700" name="description" placeholder="Descreva o que observou e como isso afeta o local..." required="" rows="4"></textarea>
-     <div class="character-count">
-      <span id="description-count">
-       0
-      </span>
-      / 700 caracteres
-     </div>
-     <div class="form-section-title form-location-title">
-      <div>
-       <h2>
-        Localização
-       </h2>
-       <p>
-        Toque no mapa para posicionar o marcador.
-       </p>
-      </div>
-     </div>
-     <p class="field-hint">
-      Você também pode arrastar o marcador para ajustar o ponto. Se preferir, use a localização do seu dispositivo.
-     </p>
-     <div class="picker-map-wrap">
-      <div class="picker-map-toolbar">
-       <span>
-        <i aria-hidden="true" class="map-region-dot">
-        </i>
-        Montes Claros — MG
-       </span>
-       <button class="locate-button" id="use-location" type="button">
-        <span aria-hidden="true">
-         ◎
-        </span>
-        Usar minha localização
-       </button>
-      </div>
-      <div aria-describedby="coordinates" aria-label="Selecione a localização da ocorrência no mapa" id="picker-map" role="application">
-      </div>
-      <div aria-live="polite" class="picker-coordinates" id="coordinates">
-       Selecione um ponto no mapa para continuar.
-      </div>
-     </div>
-     <input id="latitude" name="latitude" type="hidden"/>
-     <input id="longitude" name="longitude" type="hidden"/>
+      <input id="latitude" name="latitude" type="hidden"/>
+      <input id="longitude" name="longitude" type="hidden"/>
+     </section>
+    </div>
+    <div class="registration-footer">
+     <p aria-live="polite" class="form-feedback" id="form-feedback" role="status"></p>
      <div class="form-actions">
-      <a class="text-link" href="mapa.html">
-       Cancelar
-       <span aria-hidden="true">
-        ←
-       </span>
-      </a>
-      <button class="submit-button" type="submit">
-       Salvar registro
-       <span aria-hidden="true">
-        ↗
-       </span>
+      <a class="text-link" href="mapa.html">Cancelar</a>
+      <button class="submit-button occurrence-primary" type="submit">
+       Salvar ocorrência <span aria-hidden="true">↗</span>
       </button>
      </div>
-     <p aria-live="polite" class="form-feedback" id="form-feedback" role="status">
-     </p>
-    </form>
-    <aside class="prototype-disclaimer" role="note">
-     <span aria-hidden="true" class="disclaimer-symbol">
-      i
-     </span>
-     <div>
-      <strong>
-       Importante — protótipo acadêmico
-      </strong>
-      <p>
-       Este formulário não envia dados à Prefeitura nem a um servidor. As informações ficam no armazenamento local deste navegador e não são visíveis para outros usuários. Não inclua dados pessoais ou informações sensíveis.
-      </p>
-     </div>
-    </aside>
-   </div>
+    </div>
+   </form>
+   <p class="local-notice"><strong>Protótipo local.</strong> Os registros ficam neste navegador e não são enviados à Prefeitura. Evite incluir informações pessoais.</p>
   </main>
   <footer class="app-footer">
    <span>
@@ -240,3 +140,4 @@
   </footer>
  </body>
 </html>
+

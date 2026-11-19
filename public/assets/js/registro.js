@@ -44,7 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
             marker = L.marker(latlng, { draggable: true, title: "Localização da ocorrência" }).addTo(map);
         latitudeInput.value = Number(latlng.lat).toFixed(6);
         longitudeInput.value = Number(latlng.lng).toFixed(6);
-        coordinates.textContent = `Ponto selecionado: ${latitudeInput.value}, ${longitudeInput.value}`;
+        coordinates.textContent = `Ponto marcado · ${latitudeInput.value}, ${longitudeInput.value}`;
+        coordinates.classList.add("is-picked");
         marker.off("dragend").on("dragend", () => setPoint(marker.getLatLng()));
         feedback.textContent = "";
         feedback.className = "form-feedback";
@@ -118,3 +119,4 @@ document.addEventListener("DOMContentLoaded", () => {
         window.setTimeout(() => { window.location.href = `mapa.html?${params}`; }, 700);
     });
 });
+

@@ -30,6 +30,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearButton = document.getElementById("clear-filters");
     const locateButton = document.getElementById("locate-me");
     const liveRegion = document.getElementById("map-live-region");
+    const explorer = document.getElementById("occurrence-explorer");
+    const explorerToggle = document.getElementById("explorer-toggle");
+    const isMobile = window.matchMedia("(max-width: 760px)");
+    if (explorer && explorerToggle) {
+        explorer.dataset.expanded = "false";
+        explorerToggle.addEventListener("click", () => {
+            const expanded = explorer.dataset.expanded === "false";
+            explorer.dataset.expanded = String(expanded);
+            explorerToggle.setAttribute("aria-expanded", String(expanded));
+        });
+    }
     if (!window.L) {
         if (mapUnavailable)
             mapUnavailable.hidden = false;
@@ -149,27 +160,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const card = makeElement("article", "report-card");
         card.dataset.reportId = report.id;
         const topline = makeElement("div", "report-card-topline");
-        topline.append(makeElement("span", "report-category", report.category));
+        if (report.demo)
+            topline.append(makeElement("span", "demo-badge", "EXEMPLO"));
         const badge = makeElement("span", `status-pill ${statusClass[report.status] || ""}`, report.status);
         topline.append(badge);
         card.append(topline);
-        const titleLine = makeElement("h3", "", report.title);
-        if (report.demo)
-            titleLine.append(makeElement("span", "demo-badge", "EXEMPLO"));
-        card.append(titleLine);
-        card.append(makeElement("p", "", report.description));
-        const meta = makeElement("div", "report-card-meta");
-        meta.append(makeElement("span", "", report.address || "Ponto marcado no mapa"));
-        meta.append(makeElement("span", "", data.formatDate(report.createdAt)));
-        card.append(meta);
-        const actions = makeElement("div", "report-card-actions");
-        const focusButton = makeElement("button", "focus-report", "Ver no mapa");
+        const titleLine = makeElement("h3");
+        const focusButton = makeElement("button", "report-card-title", report.title);
         focusButton.type = "button";
         focusButton.dataset.focusId = report.id;
-        actions.append(focusButton);
+        focusButton.setAttribute("aria-pressed", "false");
+        focusButton.setAttribute("aria-label", `Ver no mapa: ${report.title}`);
+        titleLine.append(focusButton);
+        card.append(titleLine);
+        const meta = makeElement("div", "report-card-meta");
+        meta.textContent = report.address || "Ponto marcado no mapa";
+        card.append(meta);
         if (!report.demo)
-            actions.append(makeStatusSelect(report));
-        card.append(actions);
+            card.append(makeStatusSelect(report));
         return card;
     }
     function render() {
@@ -196,11 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 icon, keyboard: true, title: report.title, alt: report.title
             }).addTo(markerLayer);
             marker.bindPopup(popupContent(report), { maxWidth: 260 });
-            marker.on('click', () => {
-                list.querySelectorAll('.report-card').forEach((card) => {
-                    card.classList.toggle('is-selected', card.dataset.reportId === report.id);
-                });
-            });
+            marker.on("popupopen", () => selectReport(report.id));
             markersById.set(report.id, marker);
         });
         resultCount.textContent = String(reports.length);
@@ -213,15 +217,29 @@ document.addEventListener("DOMContentLoaded", () => {
             map.setView(center, 13);
         }
     }
+    let selectedReportId = null;
+    let pendingPopup = 0;
+    function selectReport(id) {
+        selectedReportId = id;
+        list.querySelectorAll(".report-card").forEach((card) => {
+            card.classList.toggle("is-selected", card.dataset.reportId === id);
+            card.querySelector("[data-focus-id]").setAttribute("aria-pressed", String(card.dataset.reportId === id));
+        });
+        markersById.forEach((marker, markerId) => {
+            marker.getElement()?.classList.toggle("is-selected", markerId === id);
+        });
+    }
     function focusReport(id, animate = true) {
         const marker = markersById.get(id);
         if (!marker)
             return false;
         const position = marker.getLatLng();
+        selectReport(id);
+        window.clearTimeout(pendingPopup);
         if (animate) {
             map.flyTo(position, 16, { duration: 1.15 });
-            window.setTimeout(() => {
-                if (markersById.get(id) === marker)
+            pendingPopup = window.setTimeout(() => {
+                if (markersById.get(id) === marker && selectedReportId === id)
                     marker.openPopup();
             }, 400);
         }
@@ -229,10 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
             map.setView(position, 16, { animate: false });
             marker.openPopup();
         }
-        list.querySelectorAll(".report-card").forEach((card) => {
-            const selected = card.dataset.reportId === id;
-            card.classList.toggle("is-selected", selected);
-        });
         return true;
     }
     [categoryFilter, statusFilter].forEach((field) => field?.addEventListener("change", render));
@@ -246,8 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     list.addEventListener("click", (event) => {
         const button = event.target.closest("[data-focus-id]");
-        if (button)
-            focusReport(button.dataset.focusId);
+        if (button && focusReport(button.dataset.focusId, !isMobile.matches) && isMobile.matches) {
+            mapElement.scrollIntoView({ block: "nearest", behavior: "instant" });
+        }
     });
     list.addEventListener("change", (event) => {
         const select = event.target.closest("[data-status-for]");
@@ -289,3 +304,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 120);
 });
+
