@@ -12,7 +12,7 @@
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
   <link href="assets/css/auth-globe.css" rel="stylesheet"/>
-  <link href="assets/css/geo-descent.css" rel="stylesheet"/>
+  <link href="assets/css/geo-descent.css?v=20261119" rel="stylesheet"/>
   <!-- Cesium usa globo esférico geográfico com imagens reais de satélite. -->
   <link href="https://cdn.jsdelivr.net/npm/cesium@1.138.0/Build/Cesium/Widgets/widgets.css" rel="stylesheet"/>
   <script>
@@ -24,7 +24,7 @@
   </script>
   <script defer="" src="assets/js/geo-config.js">
   </script>
-  <script defer="" src="assets/js/geo-descent.js">
+  <script defer="" src="assets/js/geo-descent.js?v=20261119">
   </script>
   <script defer="" src="assets/js/auth-globe.js">
   </script>
@@ -209,43 +209,21 @@
     </div>
     <div aria-hidden="true" class="geo-shade">
     </div>
-    <div class="geo-topbar">
-     <span class="geo-logotype">
-      urbs
-      <span>
-       .
-      </span>
-      / EXPLORAÇÃO GEOGRÁFICA
-     </span>
-     <span class="geo-mode">
-      ÓRBITA → TERRITÓRIO
-     </span>
-    </div>
-    <div aria-hidden="true" class="geo-crosshair">
-     <i>
-     </i>
+    <div class="geo-brand" aria-hidden="true">
+     urbs<span>.</span>
     </div>
     <div class="geo-details">
      <span class="geo-kicker" id="geo-phase">
-      PREPARANDO VISUALIZAÇÃO
+      DO ESPAÇO À CIDADE
      </span>
      <strong id="geo-place">
-      DA ÓRBITA AO SEU TERRITÓRIO
+      Terra
      </strong>
-     <span id="geo-altitude">
-      TERRA · 16°43′ S, 43°51′ W
-     </span>
     </div>
-    <div class="geo-progress">
+    <div aria-hidden="true" class="geo-progress">
      <div id="geo-progress-bar">
      </div>
     </div>
-    <button class="geo-skip" id="geo-skip" type="button">
-     PULAR INTRODUÇÃO ↗
-    </button>
-    <span class="geo-attribution">
-     Visualização geográfica demonstrativa · disponibilidade 3D varia conforme a região
-    </span>
    </section>
    <div aria-hidden="true" class="arrival-overlay">
     <div class="arrival-beam">
