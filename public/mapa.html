@@ -15,7 +15,7 @@
   <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
   <link href="assets/css/style.css" rel="stylesheet"/>
   <link href="assets/css/map-arrival.css" rel="stylesheet"/>
-  <link href="assets/css/map-davi-integration-v19.css?v=1906" rel="stylesheet"/>
+  <link href="assets/css/map-davi-integration-v19.css?v=1907" rel="stylesheet"/>
   <link href="assets/css/occurrences.css?v=4" rel="stylesheet"/>
   <script>
    // Rodar antes da pintura da página para manter continuidade visual entre telas.
@@ -33,7 +33,7 @@
   </script>
   <script defer="" src="assets/js/store.js?v=2">
   </script>
-  <script defer="" src="assets/js/map.js?v=1908">
+  <script defer="" src="assets/js/map.js?v=1909">
   </script>
  </head>
  <body class="app-page map-page">
@@ -138,10 +138,6 @@
       <span><i aria-hidden="true" class="legend-dot legend-solved"></i> Solucionado</span>
       <span class="map-legend-note">O ponto no canto indica a situação</span>
      </div>
-     <section aria-labelledby="map-pin-guide-title" class="map-pin-guide" hidden="">
-      <h2 id="map-pin-guide-title">Categorias do mapa</h2>
-      <ul class="map-pin-guide-list" id="map-pin-guide-list" role="list"></ul>
-     </section>
     </section>
     <aside aria-labelledby="explorer-title" class="explorer-panel" id="occurrence-explorer">
      <div class="map-sheet-bar">
@@ -228,6 +224,13 @@
      </div>
     </aside>
    </div>
+   <section aria-labelledby="map-pin-guide-title" class="map-pin-guide" hidden="">
+    <div class="map-pin-guide-heading">
+     <span>URBS / LEGENDA DO MAPA</span>
+     <h2 id="map-pin-guide-title">O que cada marcador representa</h2>
+    </div>
+    <ul class="map-pin-guide-list" id="map-pin-guide-list" role="list"></ul>
+   </section>
    <p class="local-notice"><strong>Protótipo local.</strong> Os pontos de exemplo são fictícios. Seus registros ficam neste navegador e não são enviados à Prefeitura.</p>
   </main>
   <footer class="app-footer">
