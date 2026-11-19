@@ -412,12 +412,16 @@
   width: min(590px,100%);
   max-height: min(84vh,790px);
   overflow: auto;
+  scrollbar-width: none;
   overscroll-behavior: contain;
   outline: none;
   opacity: 0;
   transform: translateY(38px) scale(.92) rotate(-2deg);
   transition: opacity .50s cubic-bezier(.16,1,.3,1),transform .74s cubic-bezier(.16,1,.3,1);
   filter: drop-shadow(0 36px 55px #0009);
+}
+.urbs-story-modal__dialog::-webkit-scrollbar {
+  display: none;
 }
 .urbs-story-modal.is-open .urbs-story-modal__dialog {
   opacity: 1;
