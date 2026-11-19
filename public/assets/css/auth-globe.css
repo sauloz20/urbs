@@ -56,21 +56,56 @@ button:focus-visible,input:focus-visible,a:focus-visible {
   overflow: hidden;
   background: radial-gradient(ellipse at 65% 50%,#0b2030 0%,#050d12 55%,#020609 100%);
 }
-.space-gradient {
-  --form-shadow: linear-gradient(90deg, #000b 0%, #0009 35%, transparent 73%);
+.starfield {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: var(--form-shadow),
-    linear-gradient(180deg, #03060bb3, transparent 38%, #03060b33 69%, #03060bd9),
-    url('../images/via-lactea-eso0932a.jpg');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-.auth-experience[data-mode="register"] .space-gradient {
-  --form-shadow: linear-gradient(270deg, #000b 0%, #0009 35%, transparent 73%);
+  background-color: #000;
+  background-image:
+    radial-gradient(circle at 3% 17%, #fff6, transparent 0.9px),
+    radial-gradient(circle at 8% 6%, #fff8, transparent 1px),
+    radial-gradient(circle at 11% 31%, #fff5, transparent 1.1px),
+    radial-gradient(circle at 17% 14%, #fff6, transparent 0.8px),
+    radial-gradient(circle at 22% 25%, #fff9, transparent 1px),
+    radial-gradient(circle at 28% 9%, #fff7, transparent 1px),
+    radial-gradient(circle at 35% 18%, #fff4, transparent 0.8px),
+    radial-gradient(circle at 42% 5%, #fff9, transparent 1.1px),
+    radial-gradient(circle at 48% 26%, #fff5, transparent 1.1px),
+    radial-gradient(circle at 54% 12%, #fff9, transparent 1.1px),
+    radial-gradient(circle at 58% 22%, #fff5, transparent 0.8px),
+    radial-gradient(circle at 64% 7%, #fff8, transparent 1px),
+    radial-gradient(circle at 71% 19%, #fff8, transparent 1px),
+    radial-gradient(circle at 76% 10%, #fff6, transparent 1px),
+    radial-gradient(circle at 82% 26%, #fff9 .25px, transparent 1.4px),
+    radial-gradient(circle at 89% 14%, #fff8, transparent 1px),
+    radial-gradient(circle at 96% 9%, #fff6, transparent 0.9px),
+    radial-gradient(circle at 94% 29%, #fff7, transparent 1px),
+    radial-gradient(circle at 4% 51%, #fff7, transparent 1px),
+    radial-gradient(circle at 16% 44%, #fff4, transparent 1px),
+    radial-gradient(circle at 33% 39%, #fff5, transparent 1px),
+    radial-gradient(circle at 39% 48%, #fff6, transparent 1.1px),
+    radial-gradient(circle at 46% 58%, #fff7, transparent 0.9px),
+    radial-gradient(circle at 54% 37%, #fff5, transparent 1px),
+    radial-gradient(circle at 65% 47%, #fff6, transparent 0.9px),
+    radial-gradient(circle at 76% 56%, #fff7, transparent 1px),
+    radial-gradient(circle at 91% 45%, #fffb .25px, transparent 1.4px),
+    radial-gradient(circle at 97% 60%, #fff7, transparent 1px),
+    radial-gradient(circle at 8% 73%, #fff9 .25px, transparent 1.2px),
+    radial-gradient(circle at 14% 90%, #fff6, transparent 1px),
+    radial-gradient(circle at 23% 64%, #fff5, transparent 0.9px),
+    radial-gradient(circle at 29% 82%, #fff6, transparent 1px),
+    radial-gradient(circle at 37% 94%, #fff8 .25px, transparent 1.2px),
+    radial-gradient(circle at 40% 73%, #fff5, transparent 0.8px),
+    radial-gradient(circle at 49% 88%, #fff8 .25px, transparent 1.2px),
+    radial-gradient(circle at 56% 70%, #fff9, transparent 1.1px),
+    radial-gradient(circle at 61% 91%, #fff6, transparent 1px),
+    radial-gradient(circle at 68% 82%, #fff9 .25px, transparent 1.3px),
+    radial-gradient(circle at 73% 95%, #fff5, transparent 0.9px),
+    radial-gradient(circle at 80% 68%, #fff4, transparent 1px),
+    radial-gradient(circle at 85% 87%, #fff7, transparent 1px),
+    radial-gradient(circle at 91% 75%, #fffa .25px, transparent 1.2px),
+    radial-gradient(circle at 96% 91%, #fff8, transparent 1px);
 }
 .topline,.bottomline {
   z-index: 12;
@@ -325,12 +360,6 @@ h1 em,h2 em {
 .demo-label {
   color: #b6d49c;
 }
-.sky-credit {
-  color: #b5c5cf;
-}
-.sky-credit:hover {
-  text-decoration: underline;
-}
 .landing-reticle {
   position: absolute;
   z-index: 7;
@@ -459,15 +488,8 @@ h1 em,h2 em {
     padding: 0 18px;
     font-size: 8px;
   }
-  .auth-experience .space-gradient,
-  .auth-experience[data-mode="register"] .space-gradient {
-    --form-shadow: radial-gradient(ellipse at 50% 50%, #000a 0%, #0007 56%, transparent 92%);
-  }
-  .bottomline {
-    gap: 7px;
-  }
-  .sky-credit {
-    white-space: nowrap;
+  .bottomline span:nth-child(2) {
+    display: none;
   }
   .planet-zone {
     width: 100%;
