@@ -6,13 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     const center = [-16.7286, -43.8578];
     const categoryMarkers = new Map([
-        ["Pavimentação", { symbol: "║", color: "#f4a96e", examples: "Buracos, asfalto quebrado e desníveis na via." }],
-        ["Iluminação pública", { symbol: "✦", color: "#f8df75", examples: "Lâmpadas apagadas, intermitentes ou danificadas." }],
-        ["Acessibilidade", { symbol: "♿︎", color: "#9ce0a3", examples: "Calçadas obstruídas, rampas danificadas ou ausentes." }],
-        ["Descarte irregular de resíduos", { symbol: "▤", color: "#c9b7f4", examples: "Lixo, entulho ou móveis descartados em área pública." }],
-        ["Drenagem", { symbol: "≋", color: "#8dcdf3", examples: "Bueiros entupidos e acúmulo de água na rua." }],
-        ["Sinalização", { symbol: "!", color: "#f6a6bf", examples: "Placas danificadas, semáforos com defeito e faixas apagadas." }],
-        ["Outro", { symbol: "•", color: "#cbd4ca", examples: "Problemas de infraestrutura fora das demais categorias." }]
+        ["Pavimentação", { icon: "construction", symbol: "║", color: "#f4a96e", examples: "Buracos, asfalto quebrado e desníveis na via." }],
+        ["Iluminação pública", { icon: "lightbulb", symbol: "✦", color: "#f8df75", examples: "Lâmpadas apagadas, intermitentes ou danificadas." }],
+        ["Acessibilidade", { icon: "accessibility", symbol: "♿︎", color: "#9ce0a3", examples: "Calçadas obstruídas, rampas danificadas ou ausentes." }],
+        ["Descarte irregular de resíduos", { icon: "trash-2", symbol: "▤", color: "#c9b7f4", examples: "Lixo, entulho ou móveis descartados em área pública." }],
+        ["Drenagem", { icon: "droplets", symbol: "≋", color: "#8dcdf3", examples: "Bueiros entupidos e acúmulo de água na rua." }],
+        ["Sinalização", { icon: "signpost", symbol: "!", color: "#f6a6bf", examples: "Placas danificadas, semáforos com defeito e faixas apagadas." }],
+        ["Outro", { icon: "map-pin", symbol: "•", color: "#cbd4ca", examples: "Problemas de infraestrutura fora das demais categorias." }]
     ]);
     const otherCategory = categoryMarkers.get("Outro");
     const statusColors = {
@@ -237,7 +237,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const pin = makeElement("span", demo ? "map-v19-pin map-v19-demo-pin" : "map-v19-pin");
         pin.setAttribute("aria-hidden", "true");
         pin.style.setProperty("--pin-color", appearance.color);
-        pin.append(makeElement("span", "map-pin-stem"), makeElement("span", "map-pin-head"));
+        const icon = makeElement("span", "map-pin-icon");
+        const iconNode = makeElement("i", "map-pin-lucide");
+        icon.append(iconNode);
+        if (window.lucide?.createIcons) {
+            iconNode.setAttribute("data-lucide", appearance.icon || "map-pin");
+            window.lucide.createIcons({ root: icon, attrs: { "stroke-width": 2.2 } });
+        } else {
+            icon.classList.add("map-pin-icon-fallback");
+            icon.textContent = appearance.symbol || "•";
+        }
+        pin.append(icon);
         if (status) {
             pin.style.setProperty("--pin-status", statusColors[status] || statusColors.Novo);
             pin.append(makeElement("span", "map-pin-status"));
